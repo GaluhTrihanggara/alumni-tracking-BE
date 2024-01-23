@@ -1,12 +1,32 @@
 // Import Library
 const puppeteer = require("puppeteer");
+const axios = require("axios");
+
+const postData = async (dataAlumni) => {
+  const url = "https://659d4ed9633f9aee790926f7.mockapi.io/alumni";
+  const data = dataAlumni;
+
+  try {
+    const response = await axios.post(url, data, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    console.log("Success:", response.data);
+  } catch (error) {
+    console.error("Error:", error.message);
+  }
+};
 
 const typingSearchInput = async (page, searchText) => {
   const inputSelector =
     "#sticky-wrapper > div > div:nth-child(1) > div > div.col-md-6.text-center > div > div > div > input";
 
   await page.waitForSelector(inputSelector);
-  await page.type(inputSelector, searchText, { delay: 100 });
+  await page.type(inputSelector, searchText, {
+    delay: 100,
+  });
   await page.keyboard.press("Enter");
   await page.waitForTimeout(2000);
 };
@@ -14,7 +34,6 @@ const typingSearchInput = async (page, searchText) => {
 const scrapingWeb = async () => {
   // Initialize Variable
   const webUrl = "https://pddikti.kemdikbud.go.id/";
-  const alumniName = "Novrianta Zuhry Sembiring Universitas Esa Unggul";
   const inputFieldSelector =
     "#sticky-wrapper > div > div:nth-child(1) > div > div.col-md-6.text-center > div > div > div > input";
   const selectedAlumniNameSelector =
@@ -23,9 +42,15 @@ const scrapingWeb = async () => {
     "#root > div > main > div > section > div > div:nth-child(1) > div";
 
   // Initialize Browser
-  const browser = await puppeteer.launch({ headless: false });
+  const browser = await puppeteer.launch({
+    headless: false,
+  });
   const page = await browser.newPage();
-  page.setViewport({ width: 1920, height: 1080, deviceScaleFactor: 1 });
+  page.setViewport({
+    width: 1920,
+    height: 1080,
+    deviceScaleFactor: 1,
+  });
 
   // Go to Web based on URL
   await page.goto(webUrl);
@@ -33,69 +58,70 @@ const scrapingWeb = async () => {
 
   // Wait for Input Field & Type alumni name
   await page.waitForSelector(inputFieldSelector);
-  await typingSearchInput(page, alumniName);
-  await page.waitForTimeout(1000);
 
-  // Scroll until the "Name" is in view
-  await page.evaluate(async (selector) => {
-    const element = document.querySelector(selector);
-    element.scrollIntoView({ behavior: "smooth", block: "center" });
-  }, selectedAlumniNameSelector);
+  const insideAlumniNamesToBeScrap = [
+    "Novrianta Zuhry Sembiring Universitas Esa Unggul",
+    "Galuh Trihanggara Universitas Esa Unggul",
+  ];
 
-  // Wait and click when selector is exist
-  await page.waitForTimeout(2000);
-  await page.waitForSelector(selectedAlumniNameSelector);
-  await page.click(selectedAlumniNameSelector);
-  await page.waitForTimeout(2000);
+  for (const [index, name] of insideAlumniNamesToBeScrap.entries()) {
+    await typingSearchInput(page, name);
+    await page.waitForTimeout(1000);
 
-  // Input alumni's name into an object
-  const biodata = await page.$$eval(biodataSelector, (rows) => {
-    let data = {};
+    // Scroll until the "Name" is in view
+    await page.evaluate(async (selector) => {
+      const element = document.querySelector(selector);
+      element.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    }, selectedAlumniNameSelector);
 
-    data.Nama = rows[0].querySelector(
-      "div > div > table > tbody > tr:nth-child(2) > td:nth-child(3)"
-    ).innerText;
-    data.Jenis_Kelamin = rows[0].querySelector(
-      "div > div > table > tbody > tr:nth-child(3) > td:nth-child(3)"
-    ).innerText;
-    data.Perguruan_Tinggi = rows[0].querySelector(
-      "div > div > table > tbody > tr:nth-child(4) > td:nth-child(3)"
-    ).innerText;
-    data.Program_Studi = rows[0].querySelector(
-      "div > div > table > tbody > tr:nth-child(5) > td:nth-child(3)"
-    ).innerText;
-    data.Jenjang = rows[0].querySelector(
-      "div > div > table > tbody > tr:nth-child(6) > td:nth-child(3)"
-    ).innerText;
-    data.Nomor_Induk_Mahasiswa = rows[0].querySelector(
-      "div > div > table > tbody > tr:nth-child(7) > td:nth-child(3)"
-    ).innerText;
-    data.Semester_Awal = rows[0].querySelector(
-      "div > div > table > tbody > tr:nth-child(8) > td:nth-child(3)"
-    ).innerText;
-    data.Status_Mahasiswa_Saat_ini = rows[0].querySelector(
-      "div > table > tbody > tr:nth-child(10) > td:nth-child(3)"
-    ).innerText;
+    // Wait and click when selector is exist
+    await page.waitForTimeout(2000);
+    await page.waitForSelector(selectedAlumniNameSelector);
+    await page.click(selectedAlumniNameSelector);
+    await page.waitForTimeout(2000);
 
-    return data;
-  });
+    // Input alumni's name into an object
+    const biodata = await page.$$eval(biodataSelector, (rows) => {
+      let data = {};
 
-  // POST alumni biodata here
-  console.log("POST REQUEST with this Body: ", biodata);
+      data.nama = rows[0].querySelector(
+        "div > div > table > tbody > tr:nth-child(2) > td:nth-child(3)"
+      ).innerText;
+      data.jenis_kelamin = rows[0].querySelector(
+        "div > div > table > tbody > tr:nth-child(3) > td:nth-child(3)"
+      ).innerText;
+      data.perguruan_tinggi = rows[0].querySelector(
+        "div > div > table > tbody > tr:nth-child(4) > td:nth-child(3)"
+      ).innerText;
+      data.program_studi = rows[0].querySelector(
+        "div > div > table > tbody > tr:nth-child(5) > td:nth-child(3)"
+      ).innerText;
+      data.jenjang = rows[0].querySelector(
+        "div > div > table > tbody > tr:nth-child(6) > td:nth-child(3)"
+      ).innerText;
+      data.nomor_induk_mahasiswa = rows[0].querySelector(
+        "div > div > table > tbody > tr:nth-child(7) > td:nth-child(3)"
+      ).innerText;
+      data.semester_awal = rows[0].querySelector(
+        "div > div > table > tbody > tr:nth-child(8) > td:nth-child(3)"
+      ).innerText;
+      data.status_mahasiswa_saat_ini = rows[0].querySelector(
+        "div > table > tbody > tr:nth-child(10) > td:nth-child(3)"
+      ).innerText;
 
+      return data;
+    });
+
+    postData(biodata);
+
+    console.log("Continue This Loop");
+  }
+
+  console.log("Selesai Looping");
   await browser.close();
 };
 
 scrapingWeb();
-
-// 2nd Way | Fast Way
-// const getSearchURL = (searchText) => {
-//   const baseSearchURL = "https://pddikti.kemdikbud.go.id/search/";
-//   // Convert searchText to a string, replace spaces with "%20", and convert to lowercase
-//   const formattedSearchText = String(searchText)
-//     .replace(/ /g, "%20")
-//     .toLowerCase();
-//   return `${baseSearchURL}${formattedSearchText}`;
-// };
-// const searchURL = getSearchURL(name);
-// await page.goto(searchURL);
