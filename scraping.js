@@ -48,7 +48,6 @@ scrapingWeb = async () => {
     "#root > div > main > div > section > div > div:nth-child(7) > div > div > div > table > tbody > tr > td:nth-child(1) > a"
   );
   await page.click(
-    "#root > div > main > div > section > div > div:nth-child(7) > div > div > div > table > tbody > tr > td:nth-child(1) > a",
     "#root > div > main > div > section > div > div:nth-child(7) > div > div > div > table > tbody > tr > td:nth-child(1) > a"
   );
   await page.waitForTimeout(2000);

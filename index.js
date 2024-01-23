@@ -6,7 +6,7 @@ const app = express();
 const port = 3000;
 
 
-const webToBeScrape = ["https://pddikti.kemdikbud.go.id/"];
+const nameToBeScrape = ["Novrianta Zuhry Sembiring Universitas Esa Unggul", "Galuh Trihanggara Universitas Esa Unggul"];
 
 const typingSearchInput = async (page, searchText) => {
   const inputSelector =
@@ -25,23 +25,21 @@ const getSearchURL = (searchText) => {
     .toLowerCase();
   return `${baseSearchURL}${formattedSearchText}`;
 };
-const scrapingWeb = async (urlFromItem) => {
+const scrapingWeb = async () => {
   let selector =
     "#root > div > main > div > section > div > div:nth-child(7) > div > div > div > table > tbody > tr:nth-child(1) > td:nth-child(1) > a";
   const browser = await puppeteer.launch({ headless: false });
   const page = await browser.newPage();
   page.setViewport({ width: 1920, height: 1080, deviceScaleFactor: 1 });
-  await page.goto(urlFromItem);
+  await page.goto("https://pddikti.kemdikbud.go.id/");
   await page.waitForTimeout(3000);
   // Wait for the search input field to be available
   await page.waitForSelector(
     "#sticky-wrapper > div > div:nth-child(1) > div > div.col-md-6.text-center > div > div > div > input"
   );
-  const namesToScrape = ["Novrianta Zuhry Sembiring Universitas Esa Unggul", "Galuh Trihanggara Universitas Esa Unggul"];
-  const name = namesToScrape;
-  await typingSearchInput(page, name);
+  await typingSearchInput(page, nameToBeScrape);
   await page.waitForTimeout(1000);
-  const searchURL = getSearchURL(namesToScrape);
+  const searchURL = getSearchURL(nameToBeScrape);
   await page.goto(searchURL);
   
   // Scroll until the desired element is in view
@@ -49,14 +47,14 @@ const scrapingWeb = async (urlFromItem) => {
     const element = document.querySelector(selector);
     element.scrollIntoView({ behavior: "smooth", block: "center" });
   }, selector);
-  await page.waitForTimeout(2000);
+  await page.waitForTimeout(5000);
   await page.waitForSelector(
     "#root > div > main > div > section > div > div:nth-child(7) > div > div > div > table > tbody > tr > td:nth-child(1) > a"
   );
   await page.click(
     "#root > div > main > div > section > div > div:nth-child(7) > div > div > div > table > tbody > tr > td:nth-child(1) > a"
   );
-  await page.waitForTimeout(2000);
+  await page.waitForTimeout(5000);
    // Scraping data for each name
   const biodataSelector =
     "#root > div > main > div > section > div > div:nth-child(1) > div"; // Sesuaikan selector jika diperlukan
@@ -93,6 +91,6 @@ const scrapingWeb = async (urlFromItem) => {
 
   await browser.close();
 };
-webToBeScrape.forEach((url) => {
+nameToBeScrape.forEach((url) => {
   scrapingWeb(url);
 });
