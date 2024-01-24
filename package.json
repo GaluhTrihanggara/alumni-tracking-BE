@@ -2,9 +2,9 @@
   "name": "sempro-be",
   "version": "1.0.0",
   "description": "Scrapping web",
-  "main": "scraping.js",
+  "main": "app.js",
   "scripts": {
-    "dev": "node scraping.js"
+    "dev": "nodemon app.js"
   },
   "keywords": [
     "scrapping"

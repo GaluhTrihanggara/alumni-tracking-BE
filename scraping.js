@@ -3,7 +3,7 @@ const puppeteer = require("puppeteer");
 const axios = require("axios");
 
 const postData = async (dataAlumni) => {
-  const url = "https://659d4ed9633f9aee790926f7.mockapi.io/alumni";
+  const url = "https://65afc6f92f26c3f2139bba28.mockapi.io/alumni";
   const data = dataAlumni;
 
   try {
