@@ -1,33 +1,22 @@
 // Import Library
 const puppeteer = require("puppeteer");
-const axios = require("axios");
-const Alumni = require('./models/alumni');
+// const axios = require("axios");
 
-  const postData = async (dataAlumni) => {
-  // Periksa dan cetak data untuk debugging
-  console.log('Data Alumni:', dataAlumni);
+// const postData = async (dataAlumni) => {
+//   const url = "https://65afc6f92f26c3f2139bba28.mockapi.io/alumni";
+//   const data = dataAlumni;
 
-  try {
-    const newAlumni = await Alumni.create(dataAlumni);
-    console.log('Success:', newAlumni);
-  } catch (error) {
-    console.error('Error:', error.message);
-  }
-};
-// Contoh data yang akan disimpan
-// const dataAlumni = {
-//   nama: 'John Doe',
-//   nomor_induk_mahasiswa: 123456,
-//   kontak_telephone: 1234567890,
-//   password: 'password123',
-//   jenis_kelamin_Kelamin: 'Laki-laki',
-//   perguruan_tinggi: 'Universitas XYZ',
-//   jenjang: 'S1',
-//   semester_awal: 2015,
-//   status_mahasiswa_saat_ini: 'Lulus',
-//   pekerjaan_saat_ini: 'Software Engineer',
-//   nama_perusahaan: 'Tech Company',
-//   alamat_perusahaan: '123 Tech Street',
+//   try {
+//     const response = await axios.post(url, data, {
+//       headers: {
+//         "Content-Type": "application/json",
+//       },
+//     });
+
+//     console.log("Success:", response.data);
+//   } catch (error) {
+//     console.error("Error:", error.message);
+//   }
 // };
 
 const typingSearchInput = async (page, searchText) => {
@@ -126,7 +115,7 @@ const scrapingWeb = async () => {
       return data;
     });
 
-    await postData(biodata);
+    postData(biodata);
 
     console.log("Continue This Loop");
   }
