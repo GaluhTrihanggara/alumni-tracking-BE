@@ -3,13 +3,25 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class scrapping_data extends Model {}
-  scrapping_data.init({
-    Nama: DataTypes.STRING,
-    Status: DataTypes.STRING
+  class Scrapping_Data extends Model {
+    /**
+     * Helper method for defining associations.
+     * This method is not a part of Sequelize lifecycle.
+     * The `models/index` file will call this method automatically.
+     */
+    static associate(models) {
+      // define association here
+    }
+  }
+  Scrapping_Data.init({
+    nama: DataTypes.STRING,
+    status: DataTypes.STRING
   }, {
     sequelize,
-    modelName: 'scrapping_data',
+    timestamps: false,
+    createdAt: false,
+    updatedAt: false,
+    modelName: 'Scrapping_Data',
   });
-  return scrapping_data;
+  return Scrapping_Data;
 };

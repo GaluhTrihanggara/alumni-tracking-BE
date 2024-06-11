@@ -2,25 +2,33 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Media_Sosial_Alumnis', {
+    await queryInterface.createTable('Scrapping_Histories', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      Alumni_ID: {
+      alumni_id: {
         type: Sequelize.INTEGER
       },
-      Media_Sosial_ID: {
-        type: Sequelize.INTEGER
-      },
-      Link: {
+      nama: {
         type: Sequelize.STRING
+      },
+      waktu: {
+        type: Sequelize.DATE
+      },
+      createdAt: {
+        allowNull: false,
+        type: Sequelize.DATE
+      },
+      updatedAt: {
+        allowNull: false,
+        type: Sequelize.DATE
       }
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Media_Sosial_Alumnis');
+    await queryInterface.dropTable('Scrapping_Histories');
   }
 };

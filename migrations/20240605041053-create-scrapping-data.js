@@ -2,19 +2,22 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Program_Studis', {
+    await queryInterface.createTable('Scrapping_Data', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      Nama: {
+      nama: {
+        type: Sequelize.STRING
+      },
+      status: {
         type: Sequelize.STRING
       }
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Program_Studis');
+    await queryInterface.dropTable('Scrapping_Data');
   }
 };

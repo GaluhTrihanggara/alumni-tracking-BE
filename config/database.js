@@ -1,9 +1,9 @@
 const { Sequelize } = require('sequelize');
+const dbConfig = require('../config/database');
 
-const sequelize = new Sequelize('Alumni', 'root', '', {
-  host: '127.0.0.1',
-  port: 3306,
-  dialect: 'mysql',
+const sequelize = new Sequelize(dbConfig.database, dbConfig.username, dbConfig.password, {
+  host: dbConfig.host,
+  dialect: dbConfig.dialect,
 });
 
 module.exports = sequelize;

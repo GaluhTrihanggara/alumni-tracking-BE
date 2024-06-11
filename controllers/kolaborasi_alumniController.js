@@ -1,7 +1,8 @@
 // kolaborasiAlumniController.js
 const { kolaborasi_alumni } = require('../models');
 
-exports.getKolaborasiAlumnis = async (req, res) => {
+module.exports = {
+getKolaborasiAlumnis: async (req, res) => {
   try {
     const kolaborasiAlumnis = await kolaborasi_alumni.findAll();
     res.json(kolaborasiAlumnis);
@@ -9,9 +10,9 @@ exports.getKolaborasiAlumnis = async (req, res) => {
     console.error(error);
     res.status(500).json({ message: 'Error retrieving kolaborasi alumnis' });
   }
-};
+},
 
-exports.getKolaborasiAlumniById = async (req, res) => {
+getKolaborasiAlumniById: async (req, res) => {
   try {
     const id = req.params.id;
     const kolaborasiAlumni = await kolaborasi_alumni.findByPk(id);
@@ -24,9 +25,9 @@ exports.getKolaborasiAlumniById = async (req, res) => {
     console.error(error);
     res.status(500).json({ message: 'Error retrieving kolaborasi alumni' });
   }
-};
+},
 
-exports.createKolaborasiAlumni = async (req, res) => {
+createKolaborasiAlumni: async (req, res) => {
   try {
     const kolaborasiAlumni = await kolaborasi_alumni.create(req.body);
     res.status(201).json(kolaborasiAlumni);
@@ -34,9 +35,9 @@ exports.createKolaborasiAlumni = async (req, res) => {
     console.error(error);
     res.status(500).json({ message: 'Error creating kolaborasi alumni' });
   }
-};
+},
 
-exports.updateKolaborasiAlumni = async (req, res) => {
+updateKolaborasiAlumni: async (req, res) => {
   try {
     const id = req.params.id;
     const kolaborasiAlumni = await kolaborasi_alumni.findByPk(id);
@@ -50,9 +51,9 @@ exports.updateKolaborasiAlumni = async (req, res) => {
     console.error(error);
     res.status(500).json({ message: 'Error updating kolaborasi alumni' });
   }
-};
+},
 
-exports.deleteKolaborasiAlumni = async (req, res) => {
+deleteKolaborasiAlumni: async (req, res) => {
   try {
     const id = req.params.id;
     const kolaborasiAlumni = await kolaborasi_alumni.findByPk(id);
@@ -66,9 +67,9 @@ exports.deleteKolaborasiAlumni = async (req, res) => {
     console.error(error);
     res.status(500).json({ message: 'Error deleting kolaborasi alumni' });
   }
-};
+},
 
-exports.getKolaborasiAlumniByNim = async (req, res) => {
+getKolaborasiAlumniByNim: async (req, res) => {
   try {
     const nim = req.params.nim;
     const kolaborasiAlumnis = await kolaborasi_alumni.findAll({ where: { Nomor_Induk_Mahasiswa: nim } });
@@ -77,9 +78,9 @@ exports.getKolaborasiAlumniByNim = async (req, res) => {
     console.error(error);
     res.status(500).json({ message: 'Error retrieving kolaborasi alumnis by NIM' });
   }
-};
+},
 
-exports.getKolaborasiAlumniByPerguruanTinggi = async (req, res) => {
+getKolaborasiAlumniByPerguruanTinggi: async (req, res) => {
   try {
     const perguruanTinggi = req.params.perguruanTinggi;
     const kolaborasiAlumnis = await kolaborasi_alumni.findAll({ where: { perguruan_tinggi: perguruanTinggi } });
@@ -88,4 +89,5 @@ exports.getKolaborasiAlumniByPerguruanTinggi = async (req, res) => {
     console.error(error);
     res.status(500).json({ message: 'Error retrieving kolaborasi alumnis by perguruan tinggi' });
   }
-};
+},
+}

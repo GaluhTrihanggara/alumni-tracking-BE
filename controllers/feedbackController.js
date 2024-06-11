@@ -1,7 +1,8 @@
 // feedbackController.js
 const { feedback } = require('../models');
 
-exports.getFeedbacks = async (req, res) => {
+module.exports = {
+getFeedbacks: async (req, res) => {
   try {
     const feedbacks = await feedback.findAll();
     res.json(feedbacks);
@@ -9,9 +10,9 @@ exports.getFeedbacks = async (req, res) => {
     console.error(error);
     res.status(500).json({ message: 'Error retrieving feedbacks' });
   }
-};
+},
 
-exports.getFeedbackById = async (req, res) => {
+getFeedbackById: async (req, res) => {
   try {
     const id = req.params.id;
     const feedback = await feedback.findByPk(id);
@@ -24,9 +25,9 @@ exports.getFeedbackById = async (req, res) => {
     console.error(error);
     res.status(500).json({ message: 'Error retrieving feedback' });
   }
-};
+},
 
-exports.createFeedback = async (req, res) => {
+createFeedback: async (req, res) => {
   try {
     const feedback = await feedback.create(req.body);
     res.status(201).json(feedback);
@@ -34,9 +35,9 @@ exports.createFeedback = async (req, res) => {
     console.error(error);
     res.status(500).json({ message: 'Error creating feedback' });
   }
-};
+},
 
-exports.updateFeedback = async (req, res) => {
+updateFeedback: async (req, res) => {
   try {
     const id = req.params.id;
     const feedback = await feedback.findByPk(id);
@@ -50,9 +51,9 @@ exports.updateFeedback = async (req, res) => {
     console.error(error);
     res.status(500).json({ message: 'Error updating feedback' });
   }
-};
+},
 
-exports.deleteFeedback = async (req, res) => {
+deleteFeedback: async (req, res) => {
   try {
     const id = req.params.id;
     const feedback = await feedback.findByPk(id);
@@ -66,9 +67,9 @@ exports.deleteFeedback = async (req, res) => {
     console.error(error);
     res.status(500).json({ message: 'Error deleting feedback' });
   }
-};
+},
 
-exports.getFeedbackByAlumniId = async (req, res) => {
+getFeedbackByAlumniId: async (req, res) => {
   try {
     const alumniId = req.params.alumniId;
     const feedbacks = await feedback.findAll({ where: { Alumni_ID: alumniId } });
@@ -77,4 +78,5 @@ exports.getFeedbackByAlumniId = async (req, res) => {
     console.error(error);
     res.status(500).json({ message: 'Error retrieving feedbacks by alumni ID' });
   }
-};
+},
+}

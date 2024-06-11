@@ -1,7 +1,8 @@
 // mediaSosialAlumniController.js
 const { Media_Sosial_Alumni } = require('../models');
 
-exports.getMediaSosialAlumnis = async (req, res) => {
+module.exports = {
+getMediaSosialAlumnis: async (req, res) => {
   try {
     const mediaSosialAlumnis = await Media_Sosial_Alumni.findAll();
     res.json(mediaSosialAlumnis);
@@ -9,9 +10,9 @@ exports.getMediaSosialAlumnis = async (req, res) => {
     console.error(error);
     res.status(500).json({ message: 'Error retrieving media sosial alumnis' });
   }
-};
+},
 
-exports.getMediaSosialAlumniById = async (req, res) => {
+getMediaSosialAlumniById: async (req, res) => {
   try {
     const id = req.params.id;
     const mediaSosialAlumni = await Media_Sosial_Alumni.findByPk(id);
@@ -24,9 +25,9 @@ exports.getMediaSosialAlumniById = async (req, res) => {
     console.error(error);
     res.status(500).json({ message: 'Error retrieving media sosial alumni' });
   }
-};
+},
 
-exports.createMediaSosialAlumni = async (req, res) => {
+createMediaSosialAlumni: async (req, res) => {
   try {
     const mediaSosialAlumni = await Media_Sosial_Alumni.create(req.body);
     res.status(201).json(mediaSosialAlumni);
@@ -34,9 +35,9 @@ exports.createMediaSosialAlumni = async (req, res) => {
     console.error(error);
     res.status(500).json({ message: 'Error creating media sosial alumni' });
   }
-};
+},
 
-exports.updateMediaSosialAlumni = async (req, res) => {
+updateMediaSosialAlumni: async (req, res) => {
   try {
     const id = req.params.id;
     const mediaSosialAlumni = await Media_Sosial_Alumni.findByPk(id);
@@ -50,9 +51,9 @@ exports.updateMediaSosialAlumni = async (req, res) => {
     console.error(error);
     res.status(500).json({ message: 'Error updating media sosial alumni' });
   }
-};
+},
 
-exports.deleteMediaSosialAlumni = async (req, res) => {
+deleteMediaSosialAlumni: async (req, res) => {
   try {
     const id = req.params.id;
     const mediaSosialAlumni = await Media_Sosial_Alumni.findByPk(id);
@@ -66,9 +67,9 @@ exports.deleteMediaSosialAlumni = async (req, res) => {
     console.error(error);
     res.status(500).json({ message: 'Error deleting media sosial alumni' });
   }
-};
+},
 
-exports.getMediaSosialAlumniByAlumniId = async (req, res) => {
+getMediaSosialAlumniByAlumniId: async (req, res) => {
   try {
     const alumniId = req.params.alumniId;
     const mediaSosialAlumnis = await Media_Sosial_Alumni.findAll({ where: { Alumni_ID: alumniId } });
@@ -77,9 +78,9 @@ exports.getMediaSosialAlumniByAlumniId = async (req, res) => {
     console.error(error);
     res.status(500).json({ message: 'Error retrieving media sosial alumnis by alumni ID' });
   }
-};
+},
 
-exports.getMediaSosialAlumniByMediaSosialId = async (req, res) => {
+getMediaSosialAlumniByMediaSosialId: async (req, res) => {
   try {
     const mediaSosialId = req.params.mediaSosialId;
     const mediaSosialAlumnis = await Media_Sosial_Alumni.findAll({ where: { Media_Sosial_ID: mediaSosialId } });
@@ -88,4 +89,5 @@ exports.getMediaSosialAlumniByMediaSosialId = async (req, res) => {
     console.error(error);
     res.status(500).json({ message: 'Error retrieving media sosial alumnis by media sosial ID' });
   }
-};
+},
+}

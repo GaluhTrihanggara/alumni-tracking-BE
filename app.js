@@ -1,44 +1,22 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const alumniRoutes = require('./routes/alumniRoutes');
-const scraperRoutes = require('./routes/scraperRoutes');
-const mysql = require("mysql");
-
+const bodyParser = require('body-parser');
+const allRoutes = require("./routes");
+// const scraperRouter = require('./routes/scraper-route');
+const mysql = require('mysql');
 const app = express();
-const port = process.env.PORT || 3000;
+const port = 3000
+
+
 // Use the cors middleware
+app.use(bodyParser.json());
 app.use(cors());
-
-const db = mysql.createConnection({
-    host: "127.0.0.1",
-    user: "root",
-    database: "Alumni"
-})
-
-db.connect(err => {
-    if(err){
-        return err;
-    }
-})
-
-console.log(db)
-
-// Routes
-const alumniRouter = express.Router();
-const scraperRouter = express.Router();
-
-// Masukkan route-route Anda di sini
-alumniRouter.get('/', (req, res) => {
-  res.send('Hello from alumniRoutes!');
-});
-
-scraperRouter.get('/', (req, res) => {
-  res.send('Hello from scraperRoutes!');
-});
+app.use(express.json());
 
 // Gunakan ini setelah semua route telah ditambahkan
-app.use('/', alumniRouter);
-app.use('/', scraperRouter);
+app.use(allRoutes);
+// app.use("/", scraperRouter);
 
 app.listen(port, (err) => {
   if (err) {

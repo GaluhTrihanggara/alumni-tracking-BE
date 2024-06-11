@@ -1,7 +1,8 @@
 // scrappingLogController.js
 const { scrapping_log } = require('../models');
 
-exports.getScrappingLogs = async (req, res) => {
+module.exports = {
+getScrappingLogs: async (req, res) => {
   try {
     const scrappingLogs = await scrapping_log.findAll();
     res.json(scrappingLogs);
@@ -9,9 +10,9 @@ exports.getScrappingLogs = async (req, res) => {
     console.error(error);
     res.status(500).json({ message: 'Error retrieving scrapping logs' });
   }
-};
+},
 
-exports.getScrappingLogById = async (req, res) => {
+getScrappingLogById: async (req, res) => {
   try {
     const id = req.params.id;
     const scrappingLog = await scrapping_log.findByPk(id);
@@ -24,9 +25,9 @@ exports.getScrappingLogById = async (req, res) => {
     console.error(error);
     res.status(500).json({ message: 'Error retrieving scrapping log' });
   }
-};
+},
 
-exports.createScrappingLog = async (req, res) => {
+createScrappingLog: async (req, res) => {
   try {
     const scrappingLog = await scrapping_log.create(req.body);
     res.status(201).json(scrappingLog);
@@ -34,9 +35,9 @@ exports.createScrappingLog = async (req, res) => {
     console.error(error);
     res.status(500).json({ message: 'Error creating scrapping log' });
   }
-};
+},
 
-exports.updateScrappingLog = async (req, res) => {
+updateScrappingLog: async (req, res) => {
   try {
     const id = req.params.id;
     const scrappingLog = await scrapping_log.findByPk(id);
@@ -50,9 +51,9 @@ exports.updateScrappingLog = async (req, res) => {
     console.error(error);
     res.status(500).json({ message: 'Error updating scrapping log' });
   }
-};
+},
 
-exports.deleteScrappingLog = async (req, res) => {
+deleteScrappingLog: async (req, res) => {
   try {
     const id = req.params.id;
     const scrappingLog = await scrapping_log.findByPk(id);
@@ -66,4 +67,5 @@ exports.deleteScrappingLog = async (req, res) => {
     console.error(error);
     res.status(500).json({ message: 'Error deleting scrapping log' });
   }
-};
+},
+}

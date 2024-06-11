@@ -1,7 +1,8 @@
 // programStudiController.js
 const { Program_Studi } = require('../models');
 
-exports.getProgramStudis = async (req, res) => {
+module.exports = {
+getProgramStudis: async (req, res) => {
   try {
     const programStudis = await Program_Studi.findAll();
     res.json(programStudis);
@@ -9,9 +10,9 @@ exports.getProgramStudis = async (req, res) => {
     console.error(error);
     res.status(500).json({ message: 'Error retrieving program studis' });
   }
-};
+},
 
-exports.getProgramStudiById = async (req, res) => {
+getProgramStudiById: async (req, res) => {
   try {
     const id = req.params.id;
     const programStudi = await Program_Studi.findByPk(id);
@@ -24,9 +25,9 @@ exports.getProgramStudiById = async (req, res) => {
     console.error(error);
     res.status(500).json({ message: 'Error retrieving program studi' });
   }
-};
+},
 
-exports.createProgramStudi = async (req, res) => {
+createProgramStudi: async (req, res) => {
   try {
     const programStudi = await Program_Studi.create(req.body);
     res.status(201).json(programStudi);
@@ -34,9 +35,9 @@ exports.createProgramStudi = async (req, res) => {
     console.error(error);
     res.status(500).json({ message: 'Error creating program studi' });
   }
-};
+},
 
-exports.updateProgramStudi = async (req, res) => {
+updateProgramStudi: async (req, res) => {
   try {
     const id = req.params.id;
     const programStudi = await Program_Studi.findByPk(id);
@@ -50,9 +51,9 @@ exports.updateProgramStudi = async (req, res) => {
     console.error(error);
     res.status(500).json({ message: 'Error updating program studi' });
   }
-};
+},
 
-exports.deleteProgramStudi = async (req, res) => {
+deleteProgramStudi: async (req, res) => {
   try {
     const id = req.params.id;
     const programStudi = await Program_Studi.findByPk(id);
@@ -66,4 +67,5 @@ exports.deleteProgramStudi = async (req, res) => {
     console.error(error);
     res.status(500).json({ message: 'Error deleting program studi' });
   }
-};
+},
+}

@@ -1,7 +1,8 @@
 // scrappingHistoryController.js
 const { scrapping_history } = require('../models');
 
-exports.getScrappingHistories = async (req, res) => {
+module.exports = {
+getScrappingHistories: async (req, res) => {
   try {
     const scrappingHistories = await scrapping_history.findAll();
     res.json(scrappingHistories);
@@ -9,9 +10,9 @@ exports.getScrappingHistories = async (req, res) => {
     console.error(error);
     res.status(500).json({ message: 'Error retrieving scrapping histories' });
   }
-};
+},
 
-exports.getScrappingHistoryById = async (req, res) => {
+getScrappingHistoryById: async (req, res) => {
   try {
     const id = req.params.id;
     const scrappingHistory = await scrapping_history.findByPk(id);
@@ -24,9 +25,9 @@ exports.getScrappingHistoryById = async (req, res) => {
     console.error(error);
     res.status(500).json({ message: 'Error retrieving scrapping history' });
   }
-};
+},
 
-exports.createScrappingHistory = async (req, res) => {
+createScrappingHistory: async (req, res) => {
   try {
     const scrappingHistory = await scrapping_history.create(req.body);
     res.status(201).json(scrappingHistory);
@@ -34,9 +35,9 @@ exports.createScrappingHistory = async (req, res) => {
     console.error(error);
     res.status(500).json({ message: 'Error creating scrapping history' });
   }
-};
+},
 
-exports.updateScrappingHistory = async (req, res) => {
+updateScrappingHistory: async (req, res) => {
   try {
     const id = req.params.id;
     const scrappingHistory = await scrapping_history.findByPk(id);
@@ -50,9 +51,9 @@ exports.updateScrappingHistory = async (req, res) => {
     console.error(error);
     res.status(500).json({ message: 'Error updating scrapping history' });
   }
-};
+},
 
-exports.deleteScrappingHistory = async (req, res) => {
+deleteScrappingHistory: async (req, res) => {
   try {
     const id = req.params.id;
     const scrappingHistory = await scrapping_history.findByPk(id);
@@ -66,4 +67,5 @@ exports.deleteScrappingHistory = async (req, res) => {
     console.error(error);
     res.status(500).json({ message: 'Error deleting scrapping history' });
   }
-};
+},
+}

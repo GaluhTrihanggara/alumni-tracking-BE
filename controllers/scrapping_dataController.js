@@ -1,7 +1,8 @@
 // scrappingDataController.js
 const { scrapping_data } = require('../models');
 
-exports.getScrappingDatas = async (req, res) => {
+module.exports = {
+getScrappingDatas: async (req, res) => {
   try {
     const scrappingDatas = await scrapping_data.findAll();
     res.json(scrappingDatas);
@@ -9,9 +10,9 @@ exports.getScrappingDatas = async (req, res) => {
     console.error(error);
     res.status(500).json({ message: 'Error retrieving scrapping datas' });
   }
-};
+},
 
-exports.getScrappingDataById = async (req, res) => {
+getScrappingDataById: async (req, res) => {
   try {
     const id = req.params.id;
     const scrappingData = await scrapping_data.findByPk(id);
@@ -24,9 +25,9 @@ exports.getScrappingDataById = async (req, res) => {
     console.error(error);
     res.status(500).json({ message: 'Error retrieving scrapping data' });
   }
-};
+},
 
-exports.createScrappingData = async (req, res) => {
+createScrappingData: async (req, res) => {
   try {
     const scrappingData = await scrapping_data.create(req.body);
     res.status(201).json(scrappingData);
@@ -34,9 +35,9 @@ exports.createScrappingData = async (req, res) => {
     console.error(error);
     res.status(500).json({ message: 'Error creating scrapping data' });
   }
-};
+},
 
-exports.updateScrappingData = async (req, res) => {
+updateScrappingData: async (req, res) => {
   try {
     const id = req.params.id;
     const scrappingData = await scrapping_data.findByPk(id);
@@ -50,9 +51,9 @@ exports.updateScrappingData = async (req, res) => {
     console.error(error);
     res.status(500).json({ message: 'Error updating scrapping data' });
   }
-};
+},
 
-exports.deleteScrappingData = async (req, res) => {
+deleteScrappingData: async (req, res) => {
   try {
     const id = req.params.id;
     const scrappingData = await scrapping_data.findByPk(id);
@@ -66,4 +67,5 @@ exports.deleteScrappingData = async (req, res) => {
     console.error(error);
     res.status(500).json({ message: 'Error deleting scrapping data' });
   }
-};
+},
+}

@@ -1,7 +1,8 @@
 // mediaSosialController.js
 const { media_sosial } = require('../models');
 
-exports.getMediaSosials = async (req, res) => {
+module.exports = {
+getMediaSosials: async (req, res) => {
   try {
     const mediaSosials = await media_sosial.findAll();
     res.json(mediaSosials);
@@ -9,9 +10,9 @@ exports.getMediaSosials = async (req, res) => {
     console.error(error);
     res.status(500).json({ message: 'Error retrieving media sosials' });
   }
-};
+},
 
-exports.getMediaSosialById = async (req, res) => {
+getMediaSosialById: async (req, res) => {
   try {
     const id = req.params.id;
     const mediaSosial = await media_sosial.findByPk(id);
@@ -24,9 +25,9 @@ exports.getMediaSosialById = async (req, res) => {
     console.error(error);
     res.status(500).json({ message: 'Error retrieving media sosial' });
   }
-};
+},
 
-exports.createMediaSosial = async (req, res) => {
+createMediaSosial: async (req, res) => {
   try {
     const mediaSosial = await media_sosial.create(req.body);
     res.status(201).json(mediaSosial);
@@ -34,9 +35,9 @@ exports.createMediaSosial = async (req, res) => {
     console.error(error);
     res.status(500).json({ message: 'Error creating media sosial' });
   }
-};
+},
 
-exports.updateMediaSosial = async (req, res) => {
+updateMediaSosial: async (req, res) => {
   try {
     const id = req.params.id;
     const mediaSosial = await media_sosial.findByPk(id);
@@ -50,9 +51,9 @@ exports.updateMediaSosial = async (req, res) => {
     console.error(error);
     res.status(500).json({ message: 'Error updating media sosial' });
   }
-};
+},
 
-exports.deleteMediaSosial = async (req, res) => {
+deleteMediaSosial: async (req, res) => {
   try {
     const id = req.params.id;
     const mediaSosial = await media_sosial.findByPk(id);
@@ -66,4 +67,5 @@ exports.deleteMediaSosial = async (req, res) => {
     console.error(error);
     res.status(500).json({ message: 'Error deleting media sosial' });
   }
-};
+},
+}

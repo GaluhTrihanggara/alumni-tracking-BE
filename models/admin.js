@@ -3,14 +3,29 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class admin extends Model {}
-  admin.init({
-    Nama: DataTypes.STRING,
+  class Admin extends Model {
+    /**
+     * Helper method for defining associations.
+     * This method is not a part of Sequelize lifecycle.
+     * The `models/index` file will call this method automatically.
+     */
+    static associate(models) {
+      // define association here
+      Admin.hasMany(models.Scrapping_History, {
+        foreignKey: 'admin_id'
+      });
+    }
+  }
+  Admin.init({
+    nama: DataTypes.STRING,
     email: DataTypes.STRING,
     password: DataTypes.STRING
   }, {
     sequelize,
-    modelName: 'admin',
+    timestamps: false,
+    createdAt: false,
+    updatedAt: false,
+    modelName: 'Admin',
   });
-  return admin;
+  return Admin;
 };

@@ -2,25 +2,19 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('admins', {
+    await queryInterface.createTable('Program_Studis', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      Nama: {
-        type: Sequelize.STRING
-      },
-      email: {
-        type: Sequelize.STRING
-      },
-      password: {
+      nama: {
         type: Sequelize.STRING
       }
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('admins');
+    await queryInterface.dropTable('Program_Studis');
   }
 };

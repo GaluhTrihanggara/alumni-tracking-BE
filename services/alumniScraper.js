@@ -1,5 +1,22 @@
 // Import Library
 const puppeteer = require("puppeteer");
+const alumni = require("../models/alumni");
+
+//Connection to DB
+const {connectDB} = require("../config/server");
+const postData = async (dataAlumni) => {
+  //Periksa dan cetak data untuk debugging
+  console.log("Data Alumni:", dataAlumni);
+
+  try {
+    const newAlumni = await alumni.create(dataAlumni);
+    if (newAlumni) {
+      console.log ("Succes To Creat:e", newAlumni);
+    }
+  } catch (error) {
+    console.error("Error:", error.message);
+  }
+};
 // const axios = require("axios");
 
 // const postData = async (dataAlumni) => {
@@ -83,6 +100,8 @@ const scrapingWeb = async () => {
     await page.click(selectedAlumniNameSelector);
     await page.waitForTimeout(2000);
 
+
+
     // Input alumni's name into an object
     const biodata = await page.$$eval(biodataSelector, (rows) => {
       let data = {};
@@ -115,7 +134,7 @@ const scrapingWeb = async () => {
       return data;
     });
 
-    postData(biodata);
+    await postData(biodata);
 
     console.log("Continue This Loop");
   }
@@ -124,4 +143,9 @@ const scrapingWeb = async () => {
   await browser.close();
 };
 
-scrapingWeb();
+const main = async () =>{
+  console.log("Run from scrapping file");
+  await connectDB();
+  scrapingWeb();
+};
+main();
