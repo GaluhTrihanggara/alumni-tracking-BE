@@ -1,9 +1,11 @@
 require("dotenv").config();
 
 const connectionInfo = {
-    username: process.env.DB_USERNAME,
-    database: process.env.DB_NAME,
-    host: process.env.DB_HOST,
+    username: 'root',
+    database: 'alumni',
+    password: '',
+    host: '127.0.0.1',
+    port: '3306',
     dialect: "mysql"
 };
 
@@ -11,9 +13,13 @@ const {Sequelize} = require("sequelize");
 const sequelize = new Sequelize(
     connectionInfo.database,
     connectionInfo.username,
+    connectionInfo.password,
     {
-        host: connectionInfo.host,
-        dialect: connectionInfo.dialect,
+        dialect: 'mysql',
+        dialectOptions: {
+            host: connectionInfo.host,
+            port: connectionInfo.port
+        }
     }
 );
 

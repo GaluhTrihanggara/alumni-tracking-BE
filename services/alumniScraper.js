@@ -1,6 +1,6 @@
 // Import Library
 const puppeteer = require("puppeteer");
-const alumni = require("../models/alumni");
+const Alumni = require("../models/alumni");
 
 //Connection to DB
 const {connectDB} = require("../config/server");
@@ -9,33 +9,14 @@ const postData = async (dataAlumni) => {
   console.log("Data Alumni:", dataAlumni);
 
   try {
-    const newAlumni = await alumni.create(dataAlumni);
+    const newAlumni = await Alumni.create(dataAlumni);
     if (newAlumni) {
-      console.log ("Succes To Creat:e", newAlumni);
+      console.log ("Succes To Create:", newAlumni);
     }
   } catch (error) {
     console.error("Error:", error.message);
   }
 };
-// const axios = require("axios");
-
-// const postData = async (dataAlumni) => {
-//   const url = "https://65afc6f92f26c3f2139bba28.mockapi.io/alumni";
-//   const data = dataAlumni;
-
-//   try {
-//     const response = await axios.post(url, data, {
-//       headers: {
-//         "Content-Type": "application/json",
-//       },
-//     });
-
-//     console.log("Success:", response.data);
-//   } catch (error) {
-//     console.error("Error:", error.message);
-//   }
-// };
-
 const typingSearchInput = async (page, searchText) => {
   const inputSelector =
     "#sticky-wrapper > div > div:nth-child(1) > div > div.col-md-6.text-center > div > div > div > input";
@@ -135,7 +116,6 @@ const scrapingWeb = async () => {
     });
 
     await postData(biodata);
-
     console.log("Continue This Loop");
   }
 
