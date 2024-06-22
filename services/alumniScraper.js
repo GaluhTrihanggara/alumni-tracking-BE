@@ -1,9 +1,5 @@
-// Import Library
 const puppeteer = require("puppeteer");
 const { Alumni, Program_Studi } = require("../models");
-
-//Connection to DB
-const { connectDB } = require("../config/server");
 
 const getProgramStudiId = async (programStudiName) => {
   const programStudi = await Program_Studi.findOne({ where: { name: programStudiName } });
@@ -22,7 +18,7 @@ const postData = async (dataAlumni) => {
     const newAlumni = await Alumni.create({
       ...dataAlumni,
       program_studi_id: programStudiId,
-      jenis_kelamin: dataAlumni.jenis_kelamin.toLowerCase() // Sesuaikan ENUM
+      jenis_kelamin: dataAlumni.jenis_kelamin.toLowerCase()
     });
 
     if (newAlumni) {
@@ -41,56 +37,43 @@ const typingSearchInput = async (page, searchText) => {
   await page.waitForTimeout(2000);
 };
 
-const scrapingWeb = async () => {
-  // Initialize Variable
+const scrapingWeb = async (alumniNames) => {
   const webUrl = "https://pddikti.kemdikbud.go.id/";
   const inputFieldSelector = "#sticky-wrapper > div > div:nth-child(1) > div > div.col-md-6.text-center > div > div > div > input";
   const selectedAlumniNameSelector = "#root > div > main > div > section > div > div:nth-child(7) > div > div > div > table > tbody > tr:nth-child(1) > td:nth-child(1) > a";
   const biodataSelector = "#root > div > main > div > section > div > div:nth-child(1) > div";
 
-  // Initialize Browser
-  const browser = await puppeteer.launch({
-    headless: false,
-  });
+  const browser = await puppeteer.launch({ headless: false });
   const page = await browser.newPage();
-  page.setViewport({
-    width: 1920,
-    height: 1080,
-    deviceScaleFactor: 1,
-  });
+  page.setViewport({ width: 1920, height: 1080, deviceScaleFactor: 1 });
 
-  // Go to Web based on URL
   await page.goto(webUrl);
   await page.waitForTimeout(1000);
 
-  // Wait for Input Field & Type alumni name
-  await page.waitForSelector(inputFieldSelector);
+  for (const alumniName of alumniNames) {
+    console.log(`Scraping data for: ${alumniName}`);
 
-  const insideAlumniNamesToBeScrap = [
-    "Novrianta Zuhry Sembiring Universitas Esa Unggul",
-    "Galuh Trihanggara Universitas Esa Unggul",
-  ];
+    await page.waitForSelector(inputFieldSelector);
 
-  for (const name of insideAlumniNamesToBeScrap) {
-    await typingSearchInput(page, name);
+    await typingSearchInput(page, alumniName);
     await page.waitForTimeout(1000);
 
-    // Scroll until the "Name" is in view
+    const elementExists = await page.$(selectedAlumniNameSelector);
+    if (!elementExists) {
+      console.log(`Alumni ${alumniName} not found`);
+      continue;
+    }
+
     await page.evaluate(async (selector) => {
       const element = document.querySelector(selector);
-      element.scrollIntoView({
-        behavior: "smooth",
-        block: "center",
-      });
+      element.scrollIntoView({ behavior: "smooth", block: "center" });
     }, selectedAlumniNameSelector);
 
-    // Wait and click when selector is exist
     await page.waitForTimeout(2000);
     await page.waitForSelector(selectedAlumniNameSelector);
     await page.click(selectedAlumniNameSelector);
     await page.waitForTimeout(2000);
 
-    // Input alumni's name into an object
     const biodata = await page.$$eval(biodataSelector, (rows) => {
       let data = {};
       data.nama = rows[0].querySelector("div > div > table > tbody > tr:nth-child(2) > td:nth-child(3)").innerText;
@@ -105,7 +88,7 @@ const scrapingWeb = async () => {
     });
 
     await postData(biodata);
-    console.log("Continue This Loop");
+    console.log(`Successfully scraped data for ${alumniName}`);
   }
 
   console.log("Selesai Looping");
