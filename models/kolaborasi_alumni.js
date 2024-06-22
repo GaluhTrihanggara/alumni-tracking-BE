@@ -15,7 +15,7 @@ module.exports = (sequelize, DataTypes) => {
   }
   Kolaborasi_Alumni.init({
     program_studi_id: DataTypes.INTEGER,
-    nama: DataTypes.STRING,
+    name: DataTypes.STRING,
     nomor_induk_mahasiswa: DataTypes.INTEGER,
     kontak_telephone: DataTypes.INTEGER,
     password: DataTypes.STRING,

@@ -2,21 +2,25 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const allRoutes = require("./routes");
-// const scraperRouter = require('./routes/scraper-route');
+const allRoutes = require("./routes"); // Menggunakan index.js secara otomatis
+const scraperRoutes = require("./routes/scraper-route");
 const mysql = require('mysql');
 const app = express();
-const port = 3000
-
+const port = 3000;
 
 // Use the cors middleware
 app.use(bodyParser.json());
 app.use(cors());
 app.use(express.json());
 
-// Gunakan ini setelah semua route telah ditambahkan
-app.use(allRoutes);
-// app.use("/", scraperRouter);
+// Use the combined routes
+app.use('/api', allRoutes); // Menambahkan prefix '/api' ke semua routes
+app.use('/api', scraperRoutes); // Prefix for scraper routes
+
+// Default route for the root endpoint
+app.get('/', (req, res) => {
+    res.send('Welcome to the API');
+});
 
 app.listen(port, (err) => {
   if (err) {
@@ -25,6 +29,7 @@ app.listen(port, (err) => {
     console.log(`App is listening on: http://localhost:${port}/`);
   }
 });
+
 
 // app.listen(port, () =>
 //   console.log(`app is listening on : http://localhost:${port}/alumni`)

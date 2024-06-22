@@ -8,7 +8,7 @@ module.exports = {
     await queryInterface.bulkInsert("Scrapping_Histories", [
       {
         alumni_id: 1, 
-        nama: "Penamabahan Data Baru Alumni",
+        name: "Penamabahan Data Baru Alumni",
         Waktu: new Date('2022-01-01T00:00:00.000Z')
       },
     ], {});

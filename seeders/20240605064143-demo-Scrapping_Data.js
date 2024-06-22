@@ -7,11 +7,11 @@ module.exports = {
       "Scrapping_Data",
     [
       { 
-        nama: "Penambahan data baru",
+        name: "Penambahan data baru",
         status: "Berhasil" 
       },
       { 
-        nama: "Update data",
+        name: "Update data",
         status: "Tidak Berhasil"
       }
     ], {});

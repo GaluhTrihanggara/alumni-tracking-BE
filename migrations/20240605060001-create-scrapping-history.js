@@ -12,7 +12,7 @@ module.exports = {
       alumni_id: {
         type: Sequelize.INTEGER
       },
-      nama: {
+      name: {
         type: Sequelize.STRING
       },
       waktu: {

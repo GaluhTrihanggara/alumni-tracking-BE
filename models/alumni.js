@@ -22,7 +22,7 @@ module.exports = (sequelize, DataTypes) => {
   Alumni.init({
     program_studi_id: DataTypes.INTEGER,
     nama: DataTypes.STRING,
-    nomor_induk_mahasiswa: DataTypes.INTEGER,
+    nomor_induk_mahasiswa: DataTypes.STRING,
     kontak_telephone: DataTypes.INTEGER,
     password: DataTypes.STRING,
     jenis_kelamin: DataTypes.ENUM('laki-laki','perempuan'),
@@ -39,6 +39,20 @@ module.exports = (sequelize, DataTypes) => {
     createdAt: false,
     updatedAt: false,
     modelName: 'Alumni',
+  hooks: {
+      beforeCreate: async (alumni) => {
+        if (alumni.password) {
+          const hash = await bcrypt.hash(alumni.password, 10);
+          alumni.password = hash;
+        }
+      },
+      beforeUpdate: async (alumni) => {
+        if (alumni.password) {
+          const hash = await bcrypt.hash(alumni.password, 10);
+          alumni.password = hash;
+        }
+      }
+    }
   });
   return Alumni;
 };

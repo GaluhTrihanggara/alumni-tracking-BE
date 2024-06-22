@@ -10,7 +10,6 @@ const programStudiRoutes = require("./program-studi-route");
 const scrappingDataRoutes = require("./scrapping-data-route");
 const scrappingHistoryRoutes = require("./scrapping-history-route");
 const scrappinglogRoutes = require("./scrapping-log-route");
-const scraperRoutes = require("./scraper-route");
 
 route.use("/auth", authRoutes);
 route.use("/admin", adminRoutes);
@@ -22,6 +21,5 @@ route.use("/program-studi", programStudiRoutes);
 route.use("/scrapping-data", scrappingDataRoutes);
 route.use("/scrapping-history", scrappingHistoryRoutes);
 route.use("/scrapping-log", scrappinglogRoutes);
-route.use("/scraper", scraperRoutes);
 
 module.exports = route;

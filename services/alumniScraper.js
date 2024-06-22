@@ -1,30 +1,42 @@
 // Import Library
 const puppeteer = require("puppeteer");
-const Alumni = require("../models/alumni");
+const { Alumni, Program_Studi } = require("../models");
 
 //Connection to DB
-const {connectDB} = require("../config/server");
+const { connectDB } = require("../config/server");
+
+const getProgramStudiId = async (programStudiName) => {
+  const programStudi = await Program_Studi.findOne({ where: { name: programStudiName } });
+  return programStudi ? programStudi.id : null;
+};
+
 const postData = async (dataAlumni) => {
-  //Periksa dan cetak data untuk debugging
   console.log("Data Alumni:", dataAlumni);
 
   try {
-    const newAlumni = await Alumni.create(dataAlumni);
+    const programStudiId = await getProgramStudiId(dataAlumni.program_studi);
+    if (!programStudiId) {
+      throw new Error(`Program Studi not found: ${dataAlumni.program_studi}`);
+    }
+
+    const newAlumni = await Alumni.create({
+      ...dataAlumni,
+      program_studi_id: programStudiId,
+      jenis_kelamin: dataAlumni.jenis_kelamin.toLowerCase() // Sesuaikan ENUM
+    });
+
     if (newAlumni) {
-      console.log ("Succes To Create:", newAlumni);
+      console.log("Success To Create:", newAlumni);
     }
   } catch (error) {
     console.error("Error:", error.message);
   }
 };
-const typingSearchInput = async (page, searchText) => {
-  const inputSelector =
-    "#sticky-wrapper > div > div:nth-child(1) > div > div.col-md-6.text-center > div > div > div > input";
 
+const typingSearchInput = async (page, searchText) => {
+  const inputSelector = "#sticky-wrapper > div > div:nth-child(1) > div > div.col-md-6.text-center > div > div > div > input";
   await page.waitForSelector(inputSelector);
-  await page.type(inputSelector, searchText, {
-    delay: 100,
-  });
+  await page.type(inputSelector, searchText, { delay: 100 });
   await page.keyboard.press("Enter");
   await page.waitForTimeout(2000);
 };
@@ -32,12 +44,9 @@ const typingSearchInput = async (page, searchText) => {
 const scrapingWeb = async () => {
   // Initialize Variable
   const webUrl = "https://pddikti.kemdikbud.go.id/";
-  const inputFieldSelector =
-    "#sticky-wrapper > div > div:nth-child(1) > div > div.col-md-6.text-center > div > div > div > input";
-  const selectedAlumniNameSelector =
-    "#root > div > main > div > section > div > div:nth-child(7) > div > div > div > table > tbody > tr:nth-child(1) > td:nth-child(1) > a";
-  const biodataSelector =
-    "#root > div > main > div > section > div > div:nth-child(1) > div";
+  const inputFieldSelector = "#sticky-wrapper > div > div:nth-child(1) > div > div.col-md-6.text-center > div > div > div > input";
+  const selectedAlumniNameSelector = "#root > div > main > div > section > div > div:nth-child(7) > div > div > div > table > tbody > tr:nth-child(1) > td:nth-child(1) > a";
+  const biodataSelector = "#root > div > main > div > section > div > div:nth-child(1) > div";
 
   // Initialize Browser
   const browser = await puppeteer.launch({
@@ -62,7 +71,7 @@ const scrapingWeb = async () => {
     "Galuh Trihanggara Universitas Esa Unggul",
   ];
 
-  for (const [index, name] of insideAlumniNamesToBeScrap.entries()) {
+  for (const name of insideAlumniNamesToBeScrap) {
     await typingSearchInput(page, name);
     await page.waitForTimeout(1000);
 
@@ -81,37 +90,17 @@ const scrapingWeb = async () => {
     await page.click(selectedAlumniNameSelector);
     await page.waitForTimeout(2000);
 
-
-
     // Input alumni's name into an object
     const biodata = await page.$$eval(biodataSelector, (rows) => {
       let data = {};
-
-      data.nama = rows[0].querySelector(
-        "div > div > table > tbody > tr:nth-child(2) > td:nth-child(3)"
-      ).innerText;
-      data.jenis_kelamin = rows[0].querySelector(
-        "div > div > table > tbody > tr:nth-child(3) > td:nth-child(3)"
-      ).innerText;
-      data.perguruan_tinggi = rows[0].querySelector(
-        "div > div > table > tbody > tr:nth-child(4) > td:nth-child(3)"
-      ).innerText;
-      data.program_studi = rows[0].querySelector(
-        "div > div > table > tbody > tr:nth-child(5) > td:nth-child(3)"
-      ).innerText;
-      data.jenjang = rows[0].querySelector(
-        "div > div > table > tbody > tr:nth-child(6) > td:nth-child(3)"
-      ).innerText;
-      data.nomor_induk_mahasiswa = rows[0].querySelector(
-        "div > div > table > tbody > tr:nth-child(7) > td:nth-child(3)"
-      ).innerText;
-      data.semester_awal = rows[0].querySelector(
-        "div > div > table > tbody > tr:nth-child(8) > td:nth-child(3)"
-      ).innerText;
-      data.status_mahasiswa_saat_ini = rows[0].querySelector(
-        "div > table > tbody > tr:nth-child(10) > td:nth-child(3)"
-      ).innerText;
-
+      data.nama = rows[0].querySelector("div > div > table > tbody > tr:nth-child(2) > td:nth-child(3)").innerText;
+      data.jenis_kelamin = rows[0].querySelector("div > div > table > tbody > tr:nth-child(3) > td:nth-child(3)").innerText;
+      data.perguruan_tinggi = rows[0].querySelector("div > div > table > tbody > tr:nth-child(4) > td:nth-child(3)").innerText;
+      data.program_studi = rows[0].querySelector("div > div > table > tbody > tr:nth-child(5) > td:nth-child(3)").innerText;
+      data.jenjang = rows[0].querySelector("div > div > table > tbody > tr:nth-child(6) > td:nth-child(3)").innerText;
+      data.nomor_induk_mahasiswa = rows[0].querySelector("div > div > table > tbody > tr:nth-child(7) > td:nth-child(3)").innerText;
+      data.semester_awal = rows[0].querySelector("div > div > table > tbody > tr:nth-child(8) > td:nth-child(3)").innerText;
+      data.status_mahasiswa_saat_ini = rows[0].querySelector("div > table > tbody > tr:nth-child(10) > td:nth-child(3)").innerText;
       return data;
     });
 
@@ -123,9 +112,4 @@ const scrapingWeb = async () => {
   await browser.close();
 };
 
-const main = async () =>{
-  console.log("Run from scrapping file");
-  await connectDB();
-  scrapingWeb();
-};
-main();
+module.exports = { scrapingWeb };

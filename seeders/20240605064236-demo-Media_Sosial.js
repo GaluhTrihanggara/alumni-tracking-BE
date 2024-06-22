@@ -6,16 +6,16 @@ module.exports = {
     await queryInterface.bulkInsert("Media_Sosials", 
     [
       {
-        nama: "Instagram"
+        name: "Instagram"
       },
       {
-        nama: "Twitter"
+        name: "Twitter"
       },
       {
-        nama: "Youtube"
+        name: "Youtube"
       },
       {
-        nama: "Linkedin"
+        name: "Linkedin"
       }
     ], {});
   },

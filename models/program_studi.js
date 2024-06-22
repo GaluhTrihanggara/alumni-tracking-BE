@@ -17,7 +17,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Program_Studi.init({
-    nama: DataTypes.STRING
+    name: DataTypes.STRING
   }, {
     sequelize,
     timestamps: false,

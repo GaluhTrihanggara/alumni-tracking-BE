@@ -16,7 +16,7 @@ module.exports = {
         type: Sequelize.STRING
       },
       nomor_induk_mahasiswa: {
-        type: Sequelize.INTEGER
+        type: Sequelize.STRING
       },
       kontak_telephone: {
         type: Sequelize.INTEGER
@@ -41,13 +41,16 @@ module.exports = {
         type: Sequelize.STRING
       },
       pekerjaan_saat_ini: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: true
       },
       nama_perusahaan: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: true
       },
       alamat_perusahaan: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: true
       }
     });
   },

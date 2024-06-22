@@ -5,43 +5,43 @@ module.exports = {
   async up (queryInterface, Sequelize) {
    await queryInterface.bulkInsert("Program_Studis", [
       {
-        nama: "Teknik Informatika"
+        name: "Teknik Informatika"
       },
       {
-        nama: "Sistem Informasi"
+        name: "Sistem Informasi"
       },
       {
-        nama: "Desain Komunikasi Visual"
+        name: "Desain Komunikasi Visual"
       },
       {
-        nama: "Desain Produk"
+        name: "Desain Produk"
       },
       {
-        nama: "Desain Interior"
+        name: "Desain Interior"
       },
       {
-        nama: "Humas"
+        name: "Humas"
       },
       {
-        nama: "Jurnalistik"
+        name: "Jurnalistik"
       },
       {
-        nama: "Ilmu Hukum"
+        name: "Ilmu Hukum"
       },
       {
-        nama: "Broadcasting"
+        name: "Broadcasting"
       },
       {
-        nama: "Akutansi"
+        name: "Akutansi"
       },
       {
-        nama: "Fisioterapi"
+        name: "Fisioterapi"
       },
       {
-        nama: "Psikologi"
+        name: "Psikologi"
       },
       {
-        nama: "Farmasi"
+        name: "Farmasi"
       },
     ], {});
   },

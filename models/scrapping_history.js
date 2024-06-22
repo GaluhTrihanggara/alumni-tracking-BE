@@ -21,7 +21,7 @@ module.exports = (sequelize, DataTypes) => {
   }
   Scrapping_History.init({
     alumni_id: DataTypes.INTEGER,
-    nama: DataTypes.STRING,
+    name: DataTypes.STRING,
     waktu: DataTypes.DATE
   }, {
     sequelize,

@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Scrapping_Data.init({
-    nama: DataTypes.STRING,
+    name: DataTypes.STRING,
     status: DataTypes.STRING
   }, {
     sequelize,

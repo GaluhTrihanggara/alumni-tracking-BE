@@ -17,7 +17,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Media_Sosial.init({
-    nama: DataTypes.STRING
+    name: DataTypes.STRING
   }, {
     sequelize,
     timestamps: false,
