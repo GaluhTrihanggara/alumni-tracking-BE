@@ -14,15 +14,21 @@ const scrapeLinkedInNames = async () => {
   const loginUrl = "https://www.linkedin.com/login";
   const inputFieldSelector = '#global-nav-typeahead';
   const typeInputSearch = 'Universitas Esa Unggul';
-  const univSelector = 'a[href*="company/universitasesaunggul"]';
-  const alumniSelector = 'a[href*="/school/universitasesaunggul/people/"]';
+  const univSearchSelector = 'a[href*="company/universitasesaunggul"]';
+  const univSelector = 'a[href*="/company/universitas-esa-unggul/"]';
+  const alumniSelector = 'a[href*="/school/universitas-esa-unggul/people/"]';
   const scrollToProfileSelector = '.org-people-profile-card__card-spacing .scaffold-finite-scroll__content > ul > li:nth-child(1) > div > section > div';
   const alumniListSelectors = '.org-people-profile-card__profile-title'; 
   let names = []; // Array untuk menyimpan nama alumni yang di-scrape
 
-  const browser = await puppeteer.launch({ headless: false });
+  const browser = await puppeteer.launch({
+    headless: false,
+    args: [
+      '--start-maximized' // Membuka browser dalam mode fullscreen
+    ],
+    defaultViewport: null // Menonaktifkan viewport default
+  });
   const page = await browser.newPage();
-  page.setViewport({ width: 1920, height: 1080, deviceScaleFactor: 1 });
 
   // Login ke LinkedIn
   await page.goto(loginUrl);
@@ -38,7 +44,7 @@ const scrapeLinkedInNames = async () => {
   await page.waitForTimeout(1000);
 
   // Scroll ke hasil pencarian Universitas Esa Unggul dan klik
-  const universityElementExists = await page.$(univSelector);
+  const universityElementExists = await page.$(univSearchSelector);
   if (!universityElementExists) {
     console.log(`University "Universitas Esa Unggul" not found`);
     await browser.close();
@@ -48,11 +54,18 @@ const scrapeLinkedInNames = async () => {
   await page.evaluate(async (selector) => {
     const element = document.querySelector(selector);
     element.scrollIntoView({ behavior: "smooth", block: "center" });
-  }, univSelector);
+  }, univSearchSelector);
 
   await page.waitForTimeout(2000);
-  await page.waitForSelector(univSelector);
-  await page.click(univSelector);
+ await page.waitForSelector(univSelector, { timeout: 10000 });
+await page.evaluate((selector) => {
+  const element = document.querySelector(selector);
+  if (element) {
+    element.click();
+  } else {
+    throw new Error("Universitas Esa Unggul link not found");
+  }
+}, univSelector);
 
   // Navigasi ke halaman alumni
   await page.waitForSelector(alumniSelector);
@@ -87,22 +100,29 @@ const scrapeLinkedInNames = async () => {
   
  // Get the alumni names
   const alumniProfiles = await page.$$(alumniListSelectors);
+  let checkedNames = 0;
 
   for (const profile of alumniProfiles) {
+    if (checkedNames >= 4) break; // Stop after checking 5 names
+
     const name = await page.evaluate(el => el.innerText.trim(), profile);
     if (name && name !== "Anggota LinkedIn") {
       console.log(`Found alumni: ${name}`);
       names.push(name);
 
-      // Check PDDikti for the alumni name
+      // Dalam fungsi scrapeLinkedInNames, ganti bagian pengecekan PDDikti dengan ini:
       const result = await checkAlumniStatus(name);
-      if (result.isAlumni) {
-        console.log(`${name} is an alumni of Universitas Esa Unggul.`);
-        await browser.close();
-        return { name, status: 'Alumni', university: result.university };
+      if (result.isFromEsaUnggul) {
+        if (result.isAlumni) {
+          console.log(`${name} adalah alumni dari Universitas Esa Unggul.`);
+        } else {
+          console.log(`${name} adalah mahasiswa Universitas Esa Unggul. Status saat ini: ${result.status}`);
+        }
       } else {
-        console.log(`${name} bukan alumni Universitas Esa Unggul. Ditemukan di ${result.university}`);
+        console.log(`${name} bukan dari Universitas Esa Unggul.`);
       }
+
+      checkedNames++; // Increment the checked names counter
     }
   }
 
