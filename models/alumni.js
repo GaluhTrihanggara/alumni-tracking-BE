@@ -32,7 +32,6 @@ module.exports = (sequelize, DataTypes) => {
     status_mahasiswa_saat_ini: DataTypes.STRING,
     pekerjaan_saat_ini: DataTypes.STRING,
     nama_perusahaan: DataTypes.STRING,
-    alamat_perusahaan: DataTypes.STRING
   }, {
     sequelize,
     timestamps: false,

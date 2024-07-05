@@ -1,6 +1,6 @@
 const { scrapeLinkedInNames } = require('./linkedinScraper');
 const { checkAlumniStatus } = require('./pddiktiChecker');
-const { scrapeLinkedInProfile } = require('./linkedinProfileScraper');
+// const { scrapeAlumniProfile } = require('./linkedinProfileScraper');
 const { scrapePDDikti } = require('./pddiktiScraper');
 
 const scrapingWeb = async (username, password) => {
@@ -21,7 +21,7 @@ const scrapingWeb = async (username, password) => {
     console.log(`${alumniName} is an alumni, scraping data...`);
 
     // // Scrape data dari LinkedIn
-    // const linkedInData = await scrapeLinkedInProfile(alumniName);
+    // const linkedInData = await scrapeAlumniProfile(alumniName);
     // console.log(`LinkedIn data for ${alumniName}:`, linkedInData);
 
     // Scrape data dari PDDikti

@@ -17,7 +17,6 @@ module.exports = {
         status_mahasiswa_saat_ini: 'Lulus',
         pekerjaan_saat_ini: 'Software Engineer',
         nama_perusahaan: 'Tech Company Inc.',
-        alamat_perusahaan: '123 Tech Street, Silicon Valley',
       },
       {
         program_studi_id: 2, // Assuming there is a Program Studi with ID 2
@@ -32,7 +31,6 @@ module.exports = {
         status_mahasiswa_saat_ini: 'Belum Lulus',
         pekerjaan_saat_ini: 'Data Analyst',
         nama_perusahaan: 'Data Insights Ltd.',
-        alamat_perusahaan: '456 Data Avenue, Analytics City',
       },
     ], {});
   },

@@ -1,12 +1,8 @@
-const alumniScraper = require('../services/linkedinScraper');
+const alumniScraper = require('../services/linkedinProfileScraper.js');
 
 const scrapeWebsite = async (req, res) => {
   try {
-    // const alumniNames = req.body.alumniNames; // Ambil array nama alumni dari request body
-    // if (!alumniNames || !Array.isArray(alumniNames)) {
-    //   return res.status(400).json({ success: false, message: 'Alumni names are required and should be an array' });
-    // }
-    const results = await alumniScraper.scrapeLinkedInNames();
+    const results = await alumniScraper.scrapeAlumniProfiles();
     res.status(200).json({ success: true, message: 'Scraping successful', data: results });
   } catch (error) {
     console.error('Error scraping website:', error);

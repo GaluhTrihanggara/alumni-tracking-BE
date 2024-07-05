@@ -1,41 +1,111 @@
-const puppeteer = require("puppeteer");
+require('dotenv').config();
+const puppeteer = require('puppeteer');
 
-const scrapeLinkedInProfile = async (alumniName) => {
-  const webUrl = `https://www.linkedin.com/search/results/people/?keywords=${encodeURIComponent(alumniName)}`;
-  const profileSelector = '#ember4967'; // Selector for profile link
-  const pekerjaan_saat_ini = '#profile-content > div > div.scaffold-layout.scaffold-layout--breakpoint-md.scaffold-layout--main-aside.scaffold-layout--reflow.pv-profile.pvs-loader-wrapper__shimmer--animate > div > div > main > section.artdeco-card.vxqYChsuCUThyAOoBoViKaTMkZPKKjKVUjgWS > div.ph5.pb5 > div.mt2.relative > div:nth-child(1) > div.text-body-medium.break-words'; // Selector for current job info
-  const nama_perusahaan = '#profile-content > div > div.scaffold-layout.scaffold-layout--breakpoint-md.scaffold-layout--main-aside.scaffold-layout--reflow.pv-profile.pvs-loader-wrapper__shimmer--animate > div > div > main > section.artdeco-card.vxqYChsuCUThyAOoBoViKaTMkZPKKjKVUjgWS > div.ph5.pb5 > div.mt2.relative > ul > li:nth-child(1) > button > span > div'; // Selector for company name
+function cleanName(name) {
+  // Menghapus titik di akhir nama
+  name = name.replace(/\.$/, '');
+  
+  // Menghapus karakter khusus dan angka
+  name = name.replace(/[^a-zA-Z\s]/g, '');
+  
+  // Menghapus spasi berlebih
+  name = name.replace(/\s+/g, ' ').trim();
+  
+  // Menambahkan "Universitas Esa Unggul" di belakang nama
+  return `${name} Universitas Esa Unggul`;
+}
 
-
-  const browser = await puppeteer.launch({ headless: false });
-  const page = await browser.newPage();
-  page.setViewport({ width: 1920, height: 1080, deviceScaleFactor: 1 });
-
-  await page.goto(webUrl, { waitUntil: 'networkidle2' });
-  await page.waitForTimeout(2000);
-
-  // Click on the first profile that appears
-  const profileExists = await page.$(profileSelector);
-  if (!profileExists) {
-    await browser.close();
-    return null;
-  }
-  await page.click(profileSelector);
-  await page.waitForTimeout(2000);
-
-  // Get profile details
-  const name = alumniName;
-  const currentJob = await page.$eval(pekerjaan_saat_ini, el => el.innerText);
-  const company = await page.$eval(nama_perusahaan, el => el.innerText);
-
-  const profileData = {
-    name,
-    pekerjaan_saat_ini,
-    nama_perusahaan,
-  };
-
-  await browser.close();
-  return profileData;
+const typingSearchInput = async (page, searchText) => {
+  const inputFieldSelector = '#global-nav-typeahead > input';
+  await page.waitForSelector(inputFieldSelector);
+  await page.type(inputFieldSelector, searchText, { delay: 150 });
+  await page.keyboard.press("Enter");
+  await page.waitForTimeout(3000);
 };
 
-module.exports = { scrapeLinkedInProfile };
+const scrapeAlumniProfiles = async (alumniName) => {
+  const cleanedName = cleanName(alumniName);
+  const profileSelector = '.entity-result__title-line span';
+  const scrollToCompanySelector = '#profile-content > div > div.scaffold-layout.scaffold-layout--breakpoint-md.scaffold-layout--main-aside.scaffold-layout--reflow.pv-profile.pvs-loader-wrapper__shimmer--animate > div > div > main > section:nth-child(5) > div.sjoTiQXsIrHRaOZVCcNpsUnpmNfFurXkMeiWaq > ul > li:nth-child(1) > div';
+  const nameSelector = 'h1.text-heading-xlarge';
+  const jobTitleSelector = '.text-body-medium';
+  const companyNameSelector = 'div[class*="inline-show-more-text--is-collapsed"]';
+  const loginUrl = "https://www.linkedin.com/login";
+  const inputFieldSelector = '#global-nav-typeahead';
+  let profileData = {};
+  
+  const browser = await puppeteer.launch({
+    headless: false,
+    args: ['--start-maximized'],
+    defaultViewport: null
+  });
+  const page = await browser.newPage();
+
+  try {
+    // Login to LinkedIn
+    await page.goto(loginUrl);
+    await page.type('#username', process.env.LINKEDIN_USERNAME);
+    await page.type('#password', process.env.LINKEDIN_PASSWORD);
+    await page.click('#organic-div > form > div.login__form_action_container > button');
+
+    // Search for alumni profile
+    await page.waitForSelector(inputFieldSelector);
+    await page.click(inputFieldSelector);
+    await page.waitForTimeout(1000);
+    await typingSearchInput(page, cleanedName);
+    await page.waitForTimeout(1000);
+
+    // Click on the alumni profile
+    await page.click(profileSelector);
+    
+    // Scroll to company
+    await page.evaluate(async (selector) => {
+      const element = document.querySelector(selector);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    }, scrollToCompanySelector);
+
+    await page.waitForTimeout(2000);
+    
+    const name = await page.$eval(nameSelector, el => el.textContent.trim());
+    
+    const jobTitle = await page.evaluate((selector) => {
+      const element = document.querySelector(selector);
+      return element ? element.textContent.trim() : 'Not found';
+    }, jobTitleSelector);
+
+    const companyName = await page.evaluate((selector) => {
+      const element = document.querySelector(selector);
+      return element ? element.textContent.trim() : 'Not found';
+    }, companyNameSelector);
+
+    profileData = {
+      name,
+      jobTitle,
+      companyName
+    };
+
+    console.log(profileData);
+  } catch (error) {
+    console.error(`Error scraping profile for ${alumniName}:`, error);
+  } finally {
+    await browser.close();
+  }
+
+  return profileData;
+}; 
+
+(async () => {
+  const dummyData = [
+    "Devira Asha",
+    "Ronan Harris Sujito"
+  ];
+
+  for (const name of dummyData) {
+    console.log(`Scraping profile for: ${name}`);
+    await scrapeAlumniProfiles(name);
+  }
+})();
+
+module.exports = { scrapeAlumniProfiles };

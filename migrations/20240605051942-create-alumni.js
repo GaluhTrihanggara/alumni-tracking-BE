@@ -47,10 +47,6 @@ module.exports = {
       nama_perusahaan: {
         type: Sequelize.STRING,
         allowNull: true
-      },
-      alamat_perusahaan: {
-        type: Sequelize.STRING,
-        allowNull: true
       }
     });
   },
