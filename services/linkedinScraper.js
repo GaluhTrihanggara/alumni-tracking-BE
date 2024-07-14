@@ -28,7 +28,7 @@ const scrapeLinkedInNames = async () => {
   const loginUrl = "https://www.linkedin.com/login";
   const inputFieldSelector = '#global-nav-typeahead';
   const typeInputSearch = 'Universitas Esa Unggul';
-  // const univSearchSelector = 'a[href*="company/universitasesaunggul"]';
+  const univSearchSelector = 'a[href*="company/universitasesaunggul"]';
   const univSelector = 'a[href*="/company/universitas-esa-unggul/"]';
   const alumniSelector = 'a[href*="/school/universitas-esa-unggul/people/"]';
   const scrollToProfileSelector = '.org-people-profile-card__card-spacing .scaffold-finite-scroll__content > ul > li:nth-child(1) > div > section > div';
@@ -66,7 +66,7 @@ const scrapeLinkedInNames = async () => {
     await page.evaluate(async (selector) => {
       const element = document.querySelector(selector);
       element.scrollIntoView({ behavior: "smooth", block: "center" });
-    }, univSelector);
+    }, univSearchSelector);
 
     await page.waitForTimeout(2000);
     await page.waitForSelector(univSelector, { timeout: 10000 });
@@ -110,7 +110,7 @@ const scrapeLinkedInNames = async () => {
     let checkedNames = 0;
 
     for (const profile of alumniProfiles) {
-      if (checkedNames >= 4) break; // Stop after checking 5 names
+      if (checkedNames >= 3) break; // Stop after checking 5 names
 
       const name = await page.evaluate(el => el.innerText.trim(), profile);
       if (name && name !== "Anggota LinkedIn") {
@@ -126,7 +126,7 @@ const scrapeLinkedInNames = async () => {
           if (result.isAlumni) {
             console.log(`${name} adalah alumni dari Universitas Esa Unggul.`);
           } else {
-            console.log(`${name} adalah mahasiswa aktif Universitas Esa Unggul. Status saat ini: ${result.status}`);
+            console.log(`${name} adalah mahasiswa Universitas Esa Unggul. Status saat ini: ${result.status}`);
           }
         } else {
           console.log(`${name} tidak ditemukan di database Universitas Esa Unggul.`);

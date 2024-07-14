@@ -1,5 +1,6 @@
 require('dotenv').config();
 const puppeteer = require('puppeteer');
+const {scrapeLinkedInNames} = require('./linkedinScraper');
 
 function cleanName(name) {
   // Menghapus titik di akhir nama
@@ -97,12 +98,9 @@ const scrapeAlumniProfiles = async (alumniName) => {
 }; 
 
 (async () => {
-  const dummyData = [
-    "Devira Asha",
-    "Ronan Harris Sujito"
-  ];
+  const alumniNames = await scrapeLinkedInNames();
 
-  for (const name of dummyData) {
+  for (const name of alumniNames) {
     console.log(`Scraping profile for: ${name}`);
     await scrapeAlumniProfiles(name);
   }

@@ -67,8 +67,16 @@ const checkAlumniStatus = async (alumniName) => {
     }
     const status = await page.evaluate(el => el.innerText.trim(), statusElement);
 
-    let isAlumni = status.toLowerCase().startsWith('Lulus');
-    let statusShort = isAlumni ? 'Lulus' : 'Aktif';
+    let isAlumni = false;
+    let statusShort = "Tidak Diketahui";
+    if (status.toLowerCase().startsWith('lulus')) {
+      isAlumni = true;
+      statusShort = 'Lulus';
+    } else if (status.toLowerCase().startsWith('aktif')) {
+      statusShort = 'Aktif';
+    } else if (status.toLowerCase().startsWith('cuti')) {
+      statusShort = 'Cuti';
+    }
 
     return {
       isFromEsaUnggul: true,
