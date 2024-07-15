@@ -28,7 +28,7 @@ module.exports = (sequelize, DataTypes) => {
     jenis_kelamin: DataTypes.ENUM('laki-laki','perempuan'),
     perguruan_tinggi: DataTypes.STRING,
     jenjang: DataTypes.STRING,
-    semester_awal: DataTypes.STRING,
+    tahun_masuk: DataTypes.STRING,
     status_mahasiswa_saat_ini: DataTypes.STRING,
     pekerjaan_saat_ini: DataTypes.STRING,
     nama_perusahaan: DataTypes.STRING,

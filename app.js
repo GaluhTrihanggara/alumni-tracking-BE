@@ -15,6 +15,7 @@ app.use(express.json());
 
 // Use the combined routes
 app.use('/api', allRoutes); // Menambahkan prefix '/api' ke semua routes
+app.use('/api', scraperRoutes);
 
 // Default route for the root endpoint
 app.get('/', (req, res) => {

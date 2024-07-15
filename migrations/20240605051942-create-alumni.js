@@ -34,7 +34,7 @@ module.exports = {
       jenjang: {
         type: Sequelize.STRING
       },
-      semester_awal: {
+      tahun_masuk: {
         type: Sequelize.STRING
       },
       status_mahasiswa_saat_ini: {

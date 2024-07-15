@@ -22,6 +22,6 @@ route.use("/program-studi", programStudiRoutes);
 route.use("/scrapping-data", scrappingDataRoutes);
 route.use("/scrapping-history", scrappingHistoryRoutes);
 route.use("/scrapping-log", scrappinglogRoutes);
-route.use("/scraper", scraperRoutes);
+route.use("/scrape", scraperRoutes);
 
 module.exports = route;
