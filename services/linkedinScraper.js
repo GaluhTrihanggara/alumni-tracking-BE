@@ -1,6 +1,6 @@
 require('dotenv').config();
 const puppeteer = require("puppeteer");
-const { checkAlumniStatus } = require('./pddiktiChecker');
+const { checkAndScrapeAlumni } = require('./pddiktiChecker');
 
 function cleanName(name) {
   // Menghapus titik di akhir nama
@@ -120,7 +120,7 @@ const scrapeLinkedInNames = async () => {
         // Clean the name and check PDDikti for the alumni name
         const cleanedName = cleanName(name);
         console.log(`Mencari informasi untuk: ${cleanedName}`);
-        const result = await checkAlumniStatus(cleanedName);
+        const result = await checkAndScrapeAlumni(cleanedName);
 
         if (result.isFromEsaUnggul) {
           if (result.isAlumni) {
