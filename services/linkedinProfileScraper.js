@@ -1,5 +1,6 @@
 require('dotenv').config();
 const puppeteer = require('puppeteer');
+const { Alumni } = require("../models");
 
 function cleanName(name) {
   // Menghapus titik di akhir nama
@@ -82,7 +83,10 @@ const scrapeLinkedInProfiles = async (alumniName) => {
       jobTitle,
       companyName
     };
-
+    await Alumni.update(
+      { pekerjaan_saat_ini: profileData.jobTitle, nama_perusahaan: profileData.companyName },
+      { where: { nama: alumniName } } // Sesuaikan kondisi dengan kolom yang ada
+    );
     console.log(profileData);
   } catch (error) {
     console.error(`Error scraping profile for ${alumniName}:`, error);
