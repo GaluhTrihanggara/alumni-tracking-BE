@@ -1,8 +1,8 @@
-const alumniScraper = require('../services/linkedinProfileScraper.js');
+const alumniScraper = require('../services/linkedinScraper');
 
 const scrapeWebsite = async (req, res) => {
   try {
-    const results = await alumniScraper.scrapeAlumniProfiles();
+    const results = await alumniScraper.scrapeLinkedInNames();
     res.status(200).json({ success: true, message: 'Scraping successful', data: results });
   } catch (error) {
     console.error('Error scraping website:', error);

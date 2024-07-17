@@ -1,19 +1,13 @@
 require('dotenv').config();
 const puppeteer = require("puppeteer");
 const { checkAndScrapeAlumni } = require('./pddiktiChecker');
+const { scrapeLinkedInProfiles } = require('./linkedinProfileScraper'); // Pastikan impor dilakukan dengan benar
 
 function cleanName(name) {
-  // Menghapus titik di akhir nama
   name = name.replace(/\.$/, '');
-  
-  // Menghapus karakter khusus dan angka
   name = name.replace(/[^a-zA-Z\s]/g, '');
-  
-  // Menghapus spasi berlebih
   name = name.replace(/\s+/g, ' ').trim();
-  
-  // Menambahkan "Universitas Esa Unggul" di belakang nama
-  return `${name} Univesitas Esa Unggul`;
+  return `${name} Universitas Esa Unggul`;
 }
 
 const typingSearchInput = async (page, searchText) => {
@@ -43,20 +37,17 @@ const scrapeLinkedInNames = async () => {
   const page = await browser.newPage();
 
   try {
-    // Login ke LinkedIn
     await page.goto(loginUrl);
     await page.type('#username', process.env.LINKEDIN_USERNAME);
     await page.type('#password', process.env.LINKEDIN_PASSWORD);
     await page.click('#organic-div > form > div.login__form_action_container > button');
 
-    // Navigasi ke halaman pencarian LinkedIn
     await page.waitForSelector(inputFieldSelector);
     await page.click(inputFieldSelector);
     await page.waitForTimeout(1000);
     await typingSearchInput(page, typeInputSearch);
     await page.waitForTimeout(1000);
 
-    // Scroll ke hasil pencarian Universitas Esa Unggul dan klik
     const universityElementExists = await page.$(univSearchSelector);
     if (!universityElementExists) {
       console.log(`University "Universitas Esa Unggul" not found`);
@@ -79,7 +70,6 @@ const scrapeLinkedInNames = async () => {
       }
     }, univSelector);
 
-    // Navigasi ke halaman alumni
     await page.waitForSelector(alumniSelector);
     await page.waitForTimeout(2000);
     const alumniLink = await page.$(alumniSelector);
@@ -92,7 +82,6 @@ const scrapeLinkedInNames = async () => {
 
     await page.waitForTimeout(3000);
 
-    // Scroll ke bagian profile alumni
     await page.evaluate(async (selector) => {
       const element = document.querySelector(selector);
       if (element) {
@@ -102,29 +91,27 @@ const scrapeLinkedInNames = async () => {
 
     await page.waitForTimeout(2000);
 
-    // Pastikan elemen alumni list sudah muncul
     await page.waitForSelector(alumniListSelectors);
     
-    // Get the alumni names
     const alumniProfiles = await page.$$(alumniListSelectors);
     let checkedNames = 0;
 
     for (const profile of alumniProfiles) {
-      if (checkedNames >= 3) break; // Stop after checking 5 names
+      if (checkedNames >= 3) break;
 
       const name = await page.evaluate(el => el.innerText.trim(), profile);
       if (name && name !== "Anggota LinkedIn") {
         console.log(`Found alumni: ${name}`);
         names.push(name);
 
-        // Clean the name and check PDDikti for the alumni name
         const cleanedName = cleanName(name);
         console.log(`Mencari informasi untuk: ${cleanedName}`);
         const result = await checkAndScrapeAlumni(cleanedName);
 
         if (result.isFromEsaUnggul) {
           if (result.isAlumni) {
-            console.log(`${name} adalah alumni dari Universitas Esa Unggul.`);
+            console.log(`${name} adalah alumni dari Universitas Esa Unggul. Scraping LinkedIn profile...`);
+            await scrapeLinkedInProfiles(name); // Panggil scrapeLinkedInProfiles jika statusnya "Lulus"
           } else {
             console.log(`${name} adalah mahasiswa Universitas Esa Unggul. Status saat ini: ${result.status}`);
           }

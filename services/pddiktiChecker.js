@@ -52,7 +52,7 @@ const checkAndScrapeAlumni = async (alumniName) => {
     await page.keyboard.press("Enter");
 
     console.log("Please solve the reCAPTCHA manually.");
-    await page.waitForTimeout(6000); // Wait for 30 seconds for manual solving
+    await page.waitForTimeout(10000); // Wait for 30 seconds for manual solving
     await page.waitForSelector(selectedAlumniNameSelector);
 
     await page.evaluate(async (selector) => {

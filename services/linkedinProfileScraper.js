@@ -1,17 +1,13 @@
 require('dotenv').config();
 const puppeteer = require('puppeteer');
-const {scrapeLinkedInNames} = require('./linkedinScraper');
 
 function cleanName(name) {
   // Menghapus titik di akhir nama
   name = name.replace(/\.$/, '');
-  
   // Menghapus karakter khusus dan angka
   name = name.replace(/[^a-zA-Z\s]/g, '');
-  
   // Menghapus spasi berlebih
   name = name.replace(/\s+/g, ' ').trim();
-  
   // Menambahkan "Universitas Esa Unggul" di belakang nama
   return `${name} Universitas Esa Unggul`;
 }
@@ -24,7 +20,7 @@ const typingSearchInput = async (page, searchText) => {
   await page.waitForTimeout(3000);
 };
 
-const scrapeAlumniProfiles = async (alumniName) => {
+const scrapeLinkedInProfiles = async (alumniName) => {
   const cleanedName = cleanName(alumniName);
   const profileSelector = '.entity-result__title-line span';
   const scrollToCompanySelector = '#profile-content > div > div.scaffold-layout.scaffold-layout--breakpoint-md.scaffold-layout--main-aside.scaffold-layout--reflow.pv-profile.pvs-loader-wrapper__shimmer--animate > div > div > main > section:nth-child(5) > div.sjoTiQXsIrHRaOZVCcNpsUnpmNfFurXkMeiWaq > ul > li:nth-child(1) > div';
@@ -97,13 +93,4 @@ const scrapeAlumniProfiles = async (alumniName) => {
   return profileData;
 }; 
 
-(async () => {
-  const alumniNames = await scrapeLinkedInNames();
-
-  for (const name of alumniNames) {
-    console.log(`Scraping profile for: ${name}`);
-    await scrapeAlumniProfiles(name);
-  }
-})();
-
-module.exports = { scrapeAlumniProfiles };
+module.exports = { scrapeLinkedInProfiles }; // Pastikan bahwa fungsi diekspor dengan benar
