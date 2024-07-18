@@ -1,5 +1,5 @@
 const puppeteer = require("puppeteer");
-const { Alumni, Program_Studi } = require("../models");
+const { Alumni_Sementara, Program_Studi } = require("../models");
 
 const getProgramStudiId = async (programStudiName) => {
   const programStudi = await Program_Studi.findOne({ where: { name: programStudiName } });
@@ -15,14 +15,24 @@ const postData = async (dataAlumni) => {
       throw new Error(`Program Studi not found: ${dataAlumni.program_studi}`);
     }
 
-    const newAlumni = await Alumni.create({
-      ...dataAlumni,
+    const newAlumni = await Alumni_Sementara.create({
       program_studi_id: programStudiId,
-      jenis_kelamin: dataAlumni.jenis_kelamin.toLowerCase()
+      nama: dataAlumni.nama,
+      nomor_induk_mahasiswa: dataAlumni.nomor_induk_mahasiswa,
+      kontak_telephone: dataAlumni.kontak_telephone,
+      password: dataAlumni.password,
+      jenis_kelamin: dataAlumni.jenis_kelamin.toLowerCase(),
+      perguruan_tinggi: dataAlumni.perguruan_tinggi,
+      jenjang: dataAlumni.jenjang,
+      tahun_masuk: dataAlumni.tahun_masuk,
+      status_mahasiswa_saat_ini: dataAlumni.status_mahasiswa_saat_ini,
+      pekerjaan_saat_ini: dataAlumni.pekerjaan_saat_ini,
+      nama_perusahaan: dataAlumni.nama_perusahaan,
+      status: 'Pending' // Set status to Pending
     });
 
     if (newAlumni) {
-      console.log("Success To Create:", newAlumni);
+      console.log("Data Alumni Sementara Created:", newAlumni);
     }
   } catch (error) {
     console.error("Error:", error.message);
@@ -35,7 +45,6 @@ const checkAndScrapeAlumni = async (alumniName) => {
   const selectedAlumniNameSelector = 'a[href^="/detail-mahasiswa/"]';
   const resultsSelector = "tbody tr";
   const statusSelector = '#root > div > div.w-full.px-6 > div.max-w-7xl.justify-center.items-center.mx-auto.mt-8 > div > div:nth-child(8) > p.text-lg.font-semibold';
-  const biodataSelector = "#root > div > main > div > section > div > div:nth-child(1) > div";
 
   const browser = await puppeteer.launch({
     headless: false,
@@ -52,7 +61,7 @@ const checkAndScrapeAlumni = async (alumniName) => {
     await page.keyboard.press("Enter");
 
     console.log("Please solve the reCAPTCHA manually.");
-    await page.waitForTimeout(10000); // Wait for 30 seconds for manual solving
+    await page.waitForTimeout(10000); // Wait for manual solving
     await page.waitForSelector(selectedAlumniNameSelector);
 
     await page.evaluate(async (selector) => {

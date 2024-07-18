@@ -2,7 +2,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Kolaborasi_Alumnis', {
+    await queryInterface.createTable('Alumni_Sementaras', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -12,7 +12,7 @@ module.exports = {
       program_studi_id: {
         type: Sequelize.INTEGER
       },
-      name: {
+      nama: {
         type: Sequelize.STRING
       },
       nomor_induk_mahasiswa: {
@@ -34,7 +34,7 @@ module.exports = {
       jenjang: {
         type: Sequelize.STRING
       },
-      semester_awal: {
+      tahun_masuk: {
         type: Sequelize.STRING
       },
       status_mahasiswa_saat_ini: {
@@ -46,20 +46,13 @@ module.exports = {
       nama_perusahaan: {
         type: Sequelize.STRING
       },
-      alamat_perusahaan: {
-        type: Sequelize.STRING
-      },
-      createdAt: {
-        allowNull: false,
-        type: Sequelize.DATE
-      },
-      updatedAt: {
-        allowNull: false,
-        type: Sequelize.DATE
+      status: {
+        type: Sequelize.ENUM('Pending', 'Approved', 'Rejected'),
+        defaultValue: 'Pending'
       }
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Kolaborasi_Alumnis');
+    await queryInterface.dropTable('Alumni_Sementaras');
   }
 };

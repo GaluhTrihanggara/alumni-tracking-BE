@@ -4,6 +4,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const allRoutes = require("./routes"); // Menggunakan index.js secara otomatis
 const scraperRoutes = require("./routes/scraper-route");
+const scraperDataRoutes = require("./routes/scraped-data-route");
 const mysql = require('mysql');
 const app = express();
 const port = 3000;
@@ -16,6 +17,7 @@ app.use(express.json());
 // Use the combined routes
 app.use('/api', allRoutes); // Menambahkan prefix '/api' ke semua routes
 app.use('/api', scraperRoutes);
+app.use('/api', scraperDataRoutes);
 
 // Default route for the root endpoint
 app.get('/', (req, res) => {
