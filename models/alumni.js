@@ -1,4 +1,5 @@
 'use strict';
+const bcrypt = require('bcrypt');
 const {
   Model
 } = require('sequelize');
@@ -22,8 +23,11 @@ module.exports = (sequelize, DataTypes) => {
   Alumni.init({
     program_studi_id: DataTypes.INTEGER,
     nama: DataTypes.STRING,
-    nomor_induk_mahasiswa: DataTypes.STRING,
-    kontak_telephone: DataTypes.INTEGER,
+    nomor_induk_mahasiswa: {
+      type: DataTypes.STRING,
+      unique: true
+    },
+    kontak_telephone: DataTypes.STRING,
     password: DataTypes.STRING,
     jenis_kelamin: DataTypes.ENUM('laki-laki','perempuan'),
     perguruan_tinggi: DataTypes.STRING,
@@ -41,14 +45,14 @@ module.exports = (sequelize, DataTypes) => {
   hooks: {
       beforeCreate: async (alumni) => {
         if (alumni.password) {
-          const hash = await bcrypt.hash(alumni.password, 10);
-          alumni.password = hash;
+          const salt = await bcrypt.genSalt(10);
+          alumni.password = await bcrypt.hash(alumni.password, salt);
         }
       },
       beforeUpdate: async (alumni) => {
-        if (alumni.password) {
-          const hash = await bcrypt.hash(alumni.password, 10);
-          alumni.password = hash;
+        if (alumni.changed('password')) {
+          const salt = await bcrypt.genSalt(10);
+          alumni.password = await bcrypt.hash(alumni.password, salt);
         }
       }
     }

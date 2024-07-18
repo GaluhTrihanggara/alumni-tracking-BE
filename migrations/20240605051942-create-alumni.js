@@ -10,16 +10,23 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       program_studi_id: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'Program_Studis',
+          key: 'id'
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL'
       },
       nama: {
         type: Sequelize.STRING
       },
       nomor_induk_mahasiswa: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        unique: true
       },
       kontak_telephone: {
-        type: Sequelize.INTEGER
+        type: Sequelize.STRING
       },
       password: {
         type: Sequelize.STRING
