@@ -1,5 +1,5 @@
 // adminController.js
-const { admin } = require('../models')
+const { Admin } = require('../models')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 
@@ -7,7 +7,7 @@ module.exports = {
 
 getAdmins: async (req, res) => {
   try {
-    const admins = await admin.findAll();
+    const admins = await Admin.findAll();
     res.json(admins);
   } catch (error) {
     console.error(error);
@@ -18,7 +18,7 @@ getAdmins: async (req, res) => {
 getAdminById: async (req, res) => {
   try {
     const id = req.params.id;
-    const admin = await admin.findByPk(id);
+    const admin = await Admin.findByPk(id);
     if (admin) {
       res.json(admin);
     } else {
@@ -33,7 +33,7 @@ getAdminById: async (req, res) => {
 updateAdmin: async (req, res) => {
   try {
     const id = req.params.id;
-    const admin = await admin.findByPk(id);
+    const admin = await Admin.findByPk(id);
     if (admin) {
       await admin.update(req.body);
       res.json(admin);
@@ -49,7 +49,7 @@ updateAdmin: async (req, res) => {
 deleteAdmin: async (req, res) => {
   try {
     const id = req.params.id;
-    const admin = await admin.findByPk(id);
+    const admin = await Admin.findByPk(id);
     if (admin) {
       await admin.destroy();
       res.json({ message: 'Admin deleted successfully' });
@@ -62,18 +62,68 @@ deleteAdmin: async (req, res) => {
   }
 },
 
-loginAdmin: async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    const admin = await admin.findOne({ where: { email, password } });
-    if (admin) {
-      res.json({ message: 'Login successful' });
-    } else {
-      res.status(401).json({ message: 'Invalid email or password' });
+  createAdmin: async (req, res) => {
+    try {
+      const { name, email, password } = req.body;
+
+      // Check if admin with this email already exists
+      const existingAdmin = await Admin.findOne({ where: { email } });
+      if (existingAdmin) {
+        return res.status(400).json({ message: 'Admin with this email already exists' });
+      }
+
+      // Create new admin
+      const newAdmin = await Admin.create({
+        name,
+        email,
+        password // password will be hashed by the beforeCreate hook in the model
+      });
+
+      // Remove password from the response
+      const adminResponse = newAdmin.toJSON();
+      delete adminResponse.password;
+
+      res.status(201).json({
+        message: 'Admin created successfully',
+        admin: adminResponse
+      });
+    } catch (error) {
+      console.error('Error creating admin:', error);
+      res.status(500).json({ message: 'Error creating admin', error: error.message });
     }
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Error logging in' });
-  }
-},
+  },
+
+ loginAdmin: async (req, res) => {
+    try {
+      const { email, password } = req.body;
+      const admin = await Admin.findOne({ where: { email } });
+      if (!admin) {
+        return res.status(401).json({ message: 'Invalid email or password' });
+      }
+      
+      const isPasswordValid = await bcrypt.compare(password, admin.password);
+      if (!isPasswordValid) {
+        return res.status(401).json({ message: 'Invalid email or password' });
+      }
+
+      const token = jwt.sign(
+        { id: admin.id, email: admin.email, role: 'admin' },
+        process.env.SECRET_KEY,
+        { expiresIn: '1h' }
+      );
+
+      res.json({
+        message: 'Login successful',
+        token: token,
+        admin: {
+          id: admin.id,
+          name: admin.name,
+          email: admin.email
+        }
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Error logging in' });
+    }
+  },
 }

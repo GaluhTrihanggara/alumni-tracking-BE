@@ -1,18 +1,26 @@
 const express = require('express');
-const authenticate = require('../middleware/auth');
+const authenticateAdmin = require('../middleware/adminAuth');
+const checkAdminRole = require('../middleware/role');
 const route = express.Router();
 const {
-loginAdmin,
-getAdmins,
-getAdminById,
-updateAdmin,
-deleteAdmin
+  loginAdmin,
+  createAdmin,
+  getAdmins,
+  getAdminById,
+  updateAdmin,
+  deleteAdmin
 } = require("../controllers/adminController");
 
-route.post("/admin/login", authenticate, loginAdmin);
-route.get("/", authenticate, getAdmins);
-route.get("/:id", authenticate, getAdminById);
-route.put("/:id", authenticate, updateAdmin);
-route.delete("/:id", authenticate, deleteAdmin);
+// New route for creating an admin
+route.post("/create", createAdmin);
+
+// Admin login route without authentication middleware
+route.post("/login", loginAdmin);
+
+// Routes that require authentication and admin role
+route.get("/", authenticateAdmin, checkAdminRole, getAdmins);
+route.get("/:id", authenticateAdmin, checkAdminRole, getAdminById);
+route.put("/:id", authenticateAdmin, checkAdminRole, updateAdmin);
+route.delete("/:id", authenticateAdmin, checkAdminRole, deleteAdmin);
 
 module.exports = route;
