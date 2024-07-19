@@ -1,93 +1,73 @@
-// kolaborasiAlumniController.js
-const { kolaborasi_alumni } = require('../models');
+// controllers/kolaborasiAlumniController.js
+const { Kolaborasi_Alumni, Alumni } = require('../models');
+const bcrypt = require('bcrypt');
 
 module.exports = {
-getKolaborasiAlumnis: async (req, res) => {
-  try {
-    const kolaborasiAlumnis = await kolaborasi_alumni.findAll();
-    res.json(kolaborasiAlumnis);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Error retrieving kolaborasi alumnis' });
-  }
-},
-
-getKolaborasiAlumniById: async (req, res) => {
-  try {
-    const id = req.params.id;
-    const kolaborasiAlumni = await kolaborasi_alumni.findByPk(id);
-    if (kolaborasiAlumni) {
-      res.json(kolaborasiAlumni);
-    } else {
-      res.status(404).json({ message: 'Kolaborasi alumni not found' });
+  // Alumni mengajukan data baru
+  submitNewAlumni: async (req, res) => {
+    try {
+      const newAlumniData = req.body;
+      const createdKolaborasi = await Kolaborasi_Alumni.create(newAlumniData);
+      
+      res.status(201).json({
+        message: 'Data alumni baru berhasil diajukan dan menunggu persetujuan admin',
+        data: createdKolaborasi
+      });
+    } catch (error) {
+      console.error('Error submitting new alumni:', error);
+      res.status(500).json({ message: 'Terjadi kesalahan saat mengajukan data alumni baru', error: error.message });
     }
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Error retrieving kolaborasi alumni' });
-  }
-},
+  },
 
-createKolaborasiAlumni: async (req, res) => {
-  try {
-    const kolaborasiAlumni = await kolaborasi_alumni.create(req.body);
-    res.status(201).json(kolaborasiAlumni);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Error creating kolaborasi alumni' });
-  }
-},
-
-updateKolaborasiAlumni: async (req, res) => {
-  try {
-    const id = req.params.id;
-    const kolaborasiAlumni = await kolaborasi_alumni.findByPk(id);
-    if (kolaborasiAlumni) {
-      await kolaborasiAlumni.update(req.body);
-      res.json(kolaborasiAlumni);
-    } else {
-      res.status(404).json({ message: 'Kolaborasi alumni not found' });
+  // Admin melihat pengajuan yang pending
+  getPendingSubmissions: async (req, res) => {
+    try {
+      const pendingSubmissions = await Kolaborasi_Alumni.findAll({
+        where: { status: 'Pending' }
+      });
+      
+      res.status(200).json({
+        message: 'Daftar pengajuan alumni yang pending',
+        data: pendingSubmissions
+      });
+    } catch (error) {
+      console.error('Error fetching pending submissions:', error);
+      res.status(500).json({ message: 'Terjadi kesalahan saat mengambil data pengajuan', error: error.message });
     }
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Error updating kolaborasi alumni' });
-  }
-},
+  },
 
-deleteKolaborasiAlumni: async (req, res) => {
-  try {
-    const id = req.params.id;
-    const kolaborasiAlumni = await kolaborasi_alumni.findByPk(id);
-    if (kolaborasiAlumni) {
-      await kolaborasiAlumni.destroy();
-      res.json({ message: 'Kolaborasi alumni deleted successfully' });
-    } else {
-      res.status(404).json({ message: 'Kolaborasi alumni not found' });
+  // Admin menyetujui atau menolak pengajuan
+  processSubmission: async (req, res) => {
+    try {
+      const { id, action } = req.body; // action bisa 'approve' atau 'reject'
+      
+      if (!id || !action) {
+        return res.status(400).json({ message: 'ID dan action diperlukan' });
+      }
+
+      const submission = await Kolaborasi_Alumni.findByPk(id);
+      if (!submission) {
+        return res.status(404).json({ message: 'Pengajuan tidak ditemukan' });
+      }
+
+      if (action === 'approve') {
+        // Pindahkan data ke tabel Alumni
+        const { id: kolaborasiId, status, createdAt, updatedAt, ...alumniData } = submission.toJSON();
+        const hashedPassword = await bcrypt.hash(alumniData.password, 10);
+        
+        await Alumni.create({ ...alumniData, password: hashedPassword });
+        await submission.update({ status: 'Approved' });
+        
+        res.status(200).json({ message: 'Pengajuan disetujui dan data ditambahkan ke tabel Alumni' });
+      } else if (action === 'reject') {
+        await submission.update({ status: 'Rejected' });
+        res.status(200).json({ message: 'Pengajuan ditolak' });
+      } else {
+        res.status(400).json({ message: 'Action tidak valid' });
+      }
+    } catch (error) {
+      console.error('Error processing submission:', error);
+      res.status(500).json({ message: 'Terjadi kesalahan saat memproses pengajuan', error: error.message });
     }
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Error deleting kolaborasi alumni' });
   }
-},
-
-getKolaborasiAlumniByNim: async (req, res) => {
-  try {
-    const nim = req.params.nim;
-    const kolaborasiAlumnis = await kolaborasi_alumni.findAll({ where: { Nomor_Induk_Mahasiswa: nim } });
-    res.json(kolaborasiAlumnis);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Error retrieving kolaborasi alumnis by NIM' });
-  }
-},
-
-getKolaborasiAlumniByPerguruanTinggi: async (req, res) => {
-  try {
-    const perguruanTinggi = req.params.perguruanTinggi;
-    const kolaborasiAlumnis = await kolaborasi_alumni.findAll({ where: { perguruan_tinggi: perguruanTinggi } });
-    res.json(kolaborasiAlumnis);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Error retrieving kolaborasi alumnis by perguruan tinggi' });
-  }
-},
-}
+};

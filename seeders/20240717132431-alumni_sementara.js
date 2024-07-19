@@ -7,8 +7,8 @@ module.exports = {
       {
         program_studi_id: 1,
         nama: 'John Doe',
-        nomor_induk_mahasiswa: 123456,
-        kontak_telephone: 628123456789,
+        nomor_induk_mahasiswa: '123456',
+        kontak_telephone: '628123456789',
         password: 'password123',
         jenis_kelamin: 'laki-laki',
         perguruan_tinggi: 'Universitas Indonesia',
@@ -22,8 +22,8 @@ module.exports = {
       {
         program_studi_id: 2,
         nama: 'Jane Smith',
-        nomor_induk_mahasiswa: 654321,
-        kontak_telephone: 628987654321,
+        nomor_induk_mahasiswa: '654321',
+        kontak_telephone: '628987654321',
         password: 'password456',
         jenis_kelamin: 'perempuan',
         perguruan_tinggi: 'Universitas Gadjah Mada',

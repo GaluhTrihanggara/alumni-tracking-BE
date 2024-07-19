@@ -1,22 +1,21 @@
+// routes/kolaborasiAlumniRoutes.js
 const express = require('express');
-const authenticate = require('../middleware/auth');
-const route = express.Router();
+const router = express.Router();
 const {
-    createKolaborasiAlumni,
-    getKolaborasiAlumnis,
-    getKolaborasiAlumniById,
-    getKolaborasiAlumniByNim,
-    getKolaborasiAlumniByPerguruanTinggi,
-    updateKolaborasiAlumni,
-    deleteKolaborasiAlumni
-} = require("../controllers/kolaborasi_alumniController")
+    submitNewAlumni,
+    getPendingSubmissions,
+    processSubmission
+} = require('../controllers/kolaborasi_alumniController');
+const authenticateAdmin = require('../middleware/adminAuth');
+const authenticate = require('../middleware/auth'); // Asumsikan Anda memiliki middleware ini
 
-route.post("/", authenticate, createKolaborasiAlumni);
-route.get("/", authenticate, getKolaborasiAlumnis);
-route.get("/:id", authenticate, getKolaborasiAlumniById);
-route.get("/:id/nim", authenticate, getKolaborasiAlumniByNim);
-route.get("/:id/perguruan-tinggi", authenticate, getKolaborasiAlumniByPerguruanTinggi);
-route.put("/:id", authenticate, updateKolaborasiAlumni);
-route.delete("/:id", authenticate, deleteKolaborasiAlumni);
+// Route untuk alumni mengajukan data baru
+router.post('/submit', authenticate, submitNewAlumni);
 
-module.exports = route;
+// Route untuk admin melihat pengajuan yang pending
+router.get('/pending', authenticateAdmin, getPendingSubmissions);
+
+// Route untuk admin menyetujui atau menolak pengajuan
+router.post('/process', authenticateAdmin, processSubmission);
+
+module.exports = router;
