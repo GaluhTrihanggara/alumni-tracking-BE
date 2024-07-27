@@ -1,5 +1,5 @@
 const express = require('express');
-const authenticate = require('../middleware/auth');
+const authenticateAdmin = require('../middleware/adminAuth');
 const route = express.Router();
 const {
     createProgramStudi,
@@ -9,10 +9,10 @@ const {
     deleteProgramStudi
 } = require("../controllers/program_studi");
 
-route.post("/", authenticate, createProgramStudi);
-route.get("/", authenticate, getProgramStudis);
-route.get("/:id", authenticate, getProgramStudiById);
-route.put("/:id", authenticate, updateProgramStudi);
-route.delete("/:id", authenticate, deleteProgramStudi);
+route.post("/", authenticateAdmin, createProgramStudi);
+route.get("/", authenticateAdmin, getProgramStudis);
+route.get("/:id", authenticateAdmin, getProgramStudiById);
+route.put("/:id", authenticateAdmin, updateProgramStudi);
+route.delete("/:id", authenticateAdmin, deleteProgramStudi);
 
 module.exports = route;

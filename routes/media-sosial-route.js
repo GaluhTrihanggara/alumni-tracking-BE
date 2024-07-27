@@ -1,5 +1,5 @@
 const express = require('express');
-const authenticate = require('../middleware/auth');
+const authenticateAdmin = require('../middleware/adminAuth');
 const route = express.Router();
 
 const {
@@ -10,10 +10,10 @@ const {
     deleteMediaSosial
 } = require("../controllers/media_sosialController");
 
-route.post("/", authenticate, createMediaSosial);
-route.get("/", authenticate, getMediaSosials);
-route.get("/:id", authenticate, getMediaSosialById);
-route.put("/:id", authenticate, updateMediaSosial);
-route.delete("/:id", authenticate, deleteMediaSosial);
+route.post("/", authenticateAdmin, createMediaSosial);
+route.get("/", authenticateAdmin, getMediaSosials);
+route.get("/:id", authenticateAdmin, getMediaSosialById);
+route.put("/:id", authenticateAdmin, updateMediaSosial);
+route.delete("/:id", authenticateAdmin, deleteMediaSosial);
 
 module.exports = route;

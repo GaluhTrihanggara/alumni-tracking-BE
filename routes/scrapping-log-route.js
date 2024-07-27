@@ -1,5 +1,5 @@
 const express = require('express');
-const authenticate = require('../middleware/auth');
+const authenticateAdmin = require('../middleware/adminAuth');
 const route = express.Router();
 const {
     createScrappingLog,
@@ -9,10 +9,10 @@ const {
     deleteScrappingLog
 } = require("../controllers/scrapping_logController");
 
-route.post("/", authenticate, createScrappingLog);
-route.get("/", authenticate, getScrappingLogs);
-route.get("/:id", authenticate, getScrappingLogById);
-route.put("/:id", authenticate, updateScrappingLog);
-route.delete("/:id", authenticate, deleteScrappingLog);
+route.post("/", authenticateAdmin, createScrappingLog);
+route.get("/", authenticateAdmin, getScrappingLogs);
+route.get("/:id", authenticateAdmin, getScrappingLogById);
+route.put("/:id", authenticateAdmin, updateScrappingLog);
+route.delete("/:id", authenticateAdmin, deleteScrappingLog);
 
 module.exports = route;
