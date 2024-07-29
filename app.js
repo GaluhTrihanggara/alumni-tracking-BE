@@ -31,33 +31,3 @@ app.listen(port, (err) => {
     console.log(`App is listening on: http://localhost:${port}/`);
   }
 });
-
-
-// app.listen(port, () =>
-//   console.log(`app is listening on : http://localhost:${port}/alumni`)
-// );
-
-// //Get All Data
-// app.get("/alumni", async (req, res) => {
-//   try {
-//     console.log("Making axios call");
-//     const response = await axios.get(url);
-//     res.status(200).json({ data: response.data });
-//   } catch (err) {
-//     console.log(err);
-//     res.status(500).json({ msg: "something bad has occurred." });
-//   }
-// });
-
-// //Get data by id
-// app.get("/alumni:id", async (req, res) => {
-//   try {
-//     let postId = req.params.id;
-//     console.log("Making axios call with post id= " + postId);
-//     const response = await axios.get(url + "/" + postId);
-//     res.status(200).json({ data: response.data });
-//   } catch (err) {
-//     console.log(err);
-//     res.status(500).json({ msg: "something bad has occurred." });
-//   }
-// });

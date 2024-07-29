@@ -11,6 +11,7 @@ const scrappingDataRoutes = require("./scrapping-data-route");
 const scrappingHistoryRoutes = require("./scrapping-history-route");
 const scrappinglogRoutes = require("./scrapping-log-route");
 const scraperRoutes = require("./scraper-route");
+const imageRoutes = require("./image-route");
 
 route.use("/auth", authRoutes);
 route.use("/admin", adminRoutes);
@@ -23,5 +24,6 @@ route.use("/scrapping-data", scrappingDataRoutes);
 route.use("/scrapping-history", scrappingHistoryRoutes);
 route.use("/scrapping-log", scrappinglogRoutes);
 route.use("/scrape", scraperRoutes);
+route.use("/image", imageRoutes);
 
 module.exports = route;
