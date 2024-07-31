@@ -91,24 +91,31 @@ module.exports = {
     },
 
     getProfile: async (req, res) => {
-        try {
-            const token = req.headers.authorization.split(' ')[1];
-            const decoded = jwt.verify(token, process.env.SECRET_KEY);
-            const alumni = await Alumni.findOne({
-                where: {
-                    id: decoded.id,
+    try {
+        const token = req.headers.authorization.split(' ')[1];
+        const decoded = jwt.verify(token, process.env.SECRET_KEY);
+        const alumni = await Alumni.findOne({
+            where: {
+                id: decoded.id,
+            },
+            include: [
+                { model: Program_Studi, as: "Program_Studi" },
+                {
+                    model: Media_Sosial_Alumni,
+                    include: [{ model: Media_Sosial, as: "Media_Sosial" }],
                 },
-            });
+            ],
+        });
 
-            if (!alumni) {
-                return res.status(404).json({ message: "Alumni not found" });
-            }
-
-            res.status(200).json(alumni);
-        } catch (error) {
-            res.status(500).json({ message: error.message });
+        if (!alumni) {
+            return res.status(404).json({ message: "Alumni not found" });
         }
-    },
+
+        res.status(200).json(alumni);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+},
 
     updateProfile: async (req, res) => {
     try {
