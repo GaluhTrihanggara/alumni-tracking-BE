@@ -1,7 +1,8 @@
 const jwt = require('jsonwebtoken');
+const { Alumni } = require('../models'); // Make sure to import your Alumni model
 require("dotenv").config();
 
-const authenticate = (req, res, next) => {
+const authenticate = async (req, res, next) => {
   try {
     const header = req.headers.authorization;
     if (!header) {
@@ -19,7 +20,15 @@ const authenticate = (req, res, next) => {
 
     const decoded = jwt.verify(token, process.env.SECRET_KEY);
     const { nomor_induk_mahasiswa } = decoded; // Mengambil nomor_induk_mahasiswa dari decoded token
-    req.nomor_induk_mahasiswa = nomor_induk_mahasiswa; // Menambahkan nomor_induk_mahasiswa ke dalam request
+    // Fetch the alumni based on nomor_induk_mahasiswa
+    const alumni = await Alumni.findOne({ where: { nomor_induk_mahasiswa } });
+    if (!alumni) {
+      return res.status(404).json({
+        message: "Alumni not found",
+      });
+    }
+
+    req.user = alumni; // Set the entire alumni object to req.user
     next();
   } catch (error) {
     res.status(400).json({
@@ -28,5 +37,11 @@ const authenticate = (req, res, next) => {
     });
   }
 };
+
+const token = jwt.sign(
+  { nomor_induk_mahasiswa: Alumni.nomor_induk_mahasiswa },
+  process.env.SECRET_KEY,
+  { expiresIn: '1h' }
+);
 
 module.exports = authenticate;

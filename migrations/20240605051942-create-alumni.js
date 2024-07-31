@@ -32,11 +32,12 @@ module.exports = {
         type: Sequelize.STRING
       },
       jenis_kelamin: {
-        type: Sequelize.ENUM('laki-laki','perempuan'),
-        defaultValue: 'laki-laki'
+        type: Sequelize.ENUM('Laki-laki','Perempuan'),
+        defaultValue: 'Laki-laki'
       },
       perguruan_tinggi: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        defaultValue: 'Universitas Esa Unggul'
       },
       jenjang: {
         type: Sequelize.STRING
@@ -45,7 +46,8 @@ module.exports = {
         type: Sequelize.STRING
       },
       status_mahasiswa_saat_ini: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        defaultValue: 'Lulus'
       },
       pekerjaan_saat_ini: {
         type: Sequelize.STRING,

@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require('bcrypt');
-const { Alumni } = require("../models");
+const { Alumni, Program_Studi } = require("../models");
 const { UniqueConstraintError } = require("sequelize");
 
 module.exports = {
@@ -50,43 +50,34 @@ module.exports = {
     },
 
     registerAction: async (req, res) => {
-        let data = req.body;
+        const { nama, nomor_induk_mahasiswa, password } = req.body;
 
-        // Basic validation
-        const requiredFields = ['nama', 'nomor_induk_mahasiswa', 'password', 'program_studi_id'];
-        for (let field of requiredFields) {
-            if (!data[field]) {
-                return res.status(400).json({
-                    message: `${field} is required`
-                });
-            }
+        if (!nama || !nomor_induk_mahasiswa || !password) {
+            return res.status(400).json({
+                message: "All fields are required",
+            });
         }
 
         try {
-            const newAlumni = await Alumni.create(data);
-
-            const responseData = {
-                id: newAlumni.id,
-                program_studi_id: newAlumni.program_studi_id,
-                nama: newAlumni.nama,
-                nomor_induk_mahasiswa: newAlumni.nomor_induk_mahasiswa,
-                kontak_telephone: newAlumni.kontak_telephone,
-                jenis_kelamin: newAlumni.jenis_kelamin,
-                perguruan_tinggi: newAlumni.perguruan_tinggi,
-                jenjang: newAlumni.jenjang,
-                tahun_masuk: newAlumni.tahun_masuk,
-                status_mahasiswa_saat_ini: newAlumni.status_mahasiswa_saat_ini,
-                pekerjaan_saat_ini: newAlumni.pekerjaan_saat_ini,
-                nama_perusahaan: newAlumni.nama_perusahaan,
-            };
+            const newAlumni = await Alumni.create({
+                nama,
+                nomor_induk_mahasiswa,
+                password,
+                status_mahasiswa_saat_ini: "Lulus", // Nilai default
+                perguruan_tinggi: "Universitas Esa Unggul" // Nilai default
+            });
 
             res.status(201).json({
                 message: "Successfully created new alumni",
-                alumni: responseData
+                alumni: {
+                    id: newAlumni.id,
+                    nama: newAlumni.nama,
+                    nomor_induk_mahasiswa: newAlumni.nomor_induk_mahasiswa,
+                }
             });
         } catch (error) {
             console.error('Registration error:', error);
-            if (error instanceof UniqueConstraintError) {
+            if (error.name === "SequelizeUniqueConstraintError") {
                 return res.status(400).json({
                     message: "NIM already exists",
                     error: error.message
@@ -97,5 +88,57 @@ module.exports = {
                 error: error.message
             });
         }
+    },
+
+    getProfile: async (req, res) => {
+        try {
+            const token = req.headers.authorization.split(' ')[1];
+            const decoded = jwt.verify(token, process.env.SECRET_KEY);
+            const alumni = await Alumni.findOne({
+                where: {
+                    id: decoded.id,
+                },
+            });
+
+            if (!alumni) {
+                return res.status(404).json({ message: "Alumni not found" });
+            }
+
+            res.status(200).json(alumni);
+        } catch (error) {
+            res.status(500).json({ message: error.message });
+        }
+    },
+
+    updateProfile: async (req, res) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json({ message: 'Authentication required' });
     }
+
+    const { id, nomor_induk_mahasiswa } = req.user;
+    const { program_studi_id, ...otherFields } = req.body;
+    
+    const alumni = await Alumni.findOne({ where: { nomor_induk_mahasiswa } });
+    if (!alumni) {
+      return res.status(404).json({ message: 'Alumni not found' });
+    }
+
+    await alumni.update({ 
+      ...otherFields,
+      program_studi_id: program_studi_id 
+    });
+
+    // Fetch the updated alumni data including the Program_Studi
+    const updatedAlumni = await Alumni.findOne({
+      where: { nomor_induk_mahasiswa },
+      include: [{ model: Program_Studi, as: 'Program_Studi' }]
+    });
+
+    res.json(updatedAlumni);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error updating profile' });
+  }
+}
 };

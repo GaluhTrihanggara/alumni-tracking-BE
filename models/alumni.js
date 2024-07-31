@@ -12,8 +12,8 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Alumni.belongsTo(models.Program_Studi, {
-        foreignKey: 'program_studi_id'
+      Alumni.belongsTo (models.Program_Studi, { 
+        foreignKey: 'program_studi_id', as: 'Program_Studi' 
       });
       Alumni.hasMany(models.Media_Sosial_Alumni, {
         foreignKey: 'alumni_id'
