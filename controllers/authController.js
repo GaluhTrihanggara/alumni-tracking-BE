@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require('bcrypt');
-const { Alumni, Program_Studi } = require("../models");
+const { Alumni, Program_Studi, Media_Sosial_Alumni, Media_Sosial } = require("../models");
 const { UniqueConstraintError } = require("sequelize");
 
 module.exports = {
@@ -111,34 +111,53 @@ module.exports = {
     },
 
     updateProfile: async (req, res) => {
-  try {
-    if (!req.user) {
-      return res.status(401).json({ message: 'Authentication required' });
+    try {
+      if (!req.user) {
+        return res.status(401).json({ message: "Authentication required" });
+      }
+
+      const { id, nomor_induk_mahasiswa } = req.user;
+      const { program_studi_id, Media_Sosial_Alumnis, ...otherFields } = req.body;
+
+      const alumni = await Alumni.findOne({ where: { nomor_induk_mahasiswa } });
+      if (!alumni) {
+        return res.status(404).json({ message: "Alumni not found" });
+      }
+
+      await alumni.update({
+        ...otherFields,
+        program_studi_id: program_studi_id,
+      });
+
+      // Delete existing media sosial records
+      await Media_Sosial_Alumni.destroy({ where: { alumni_id: alumni.id } });
+
+      // Create new media sosial records
+      if (Media_Sosial_Alumnis && Media_Sosial_Alumnis.length > 0) {
+        const mediaSosialAlumniData = Media_Sosial_Alumnis.map((media) => ({
+          alumni_id: alumni.id,
+          media_sosial_id: media.media_sosial_id,
+          link: media.link,
+        }));
+        await Media_Sosial_Alumni.bulkCreate(mediaSosialAlumniData);
+      }
+
+      // Fetch the updated alumni data including the Program_Studi and Media_Sosial_Alumnis
+      const updatedAlumni = await Alumni.findOne({
+        where: { nomor_induk_mahasiswa },
+        include: [
+          { model: Program_Studi, as: "Program_Studi" },
+          {
+            model: Media_Sosial_Alumni,
+            include: [{ model: Media_Sosial, as: "Media_Sosial" }],
+          },
+        ],
+      });
+
+      res.json(updatedAlumni);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Error updating profile" });
     }
-
-    const { id, nomor_induk_mahasiswa } = req.user;
-    const { program_studi_id, ...otherFields } = req.body;
-    
-    const alumni = await Alumni.findOne({ where: { nomor_induk_mahasiswa } });
-    if (!alumni) {
-      return res.status(404).json({ message: 'Alumni not found' });
-    }
-
-    await alumni.update({ 
-      ...otherFields,
-      program_studi_id: program_studi_id 
-    });
-
-    // Fetch the updated alumni data including the Program_Studi
-    const updatedAlumni = await Alumni.findOne({
-      where: { nomor_induk_mahasiswa },
-      include: [{ model: Program_Studi, as: 'Program_Studi' }]
-    });
-
-    res.json(updatedAlumni);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Error updating profile' });
-  }
-}
+  },
 };
