@@ -173,15 +173,28 @@ module.exports = {
     const { id } = req.user;
     const { changes } = req.body;
 
-    if (!Submission_Change) {
-      throw new Error('Submission_Change model is not defined');
+    // Fetch the current profile data
+    const currentProfile = await Alumni.findByPk(id, {
+      include: [{ model: Media_Sosial_Alumni, include: [Media_Sosial] }]
+    });
+
+    if (!currentProfile) {
+      return res.status(404).json({ message: 'Profile not found' });
     }
 
-    // Simpan perubahan ke tabel sementara atau collection baru
+    // Compare the submitted changes with the current profile data
+    const filteredChanges = {};
+    for (const key in changes) {
+      if (JSON.stringify(changes[key]) !== JSON.stringify(currentProfile[key])) {
+        filteredChanges[key] = changes[key];
+      }
+    }
+
+    // Create a new submission change entry with only the filtered changes
     const submission = await Submission_Change.create({
       alumni_id: id,
-      changes: changes,
-      status: 'pending'
+      changes: filteredChanges,
+      status: 'Pending'
     });
 
     res.status(200).json({ message: "Profile changes submitted for approval", submissionId: submission.id });
