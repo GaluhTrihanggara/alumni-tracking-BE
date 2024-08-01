@@ -18,6 +18,9 @@ module.exports = (sequelize, DataTypes) => {
       Alumni.hasMany(models.Media_Sosial_Alumni, {
         foreignKey: 'alumni_id'
       });
+      Alumni.hasOne(models.Submission_Change, {
+        foreignKey: 'alumni_id'
+      });
     }
   }
   Alumni.init({

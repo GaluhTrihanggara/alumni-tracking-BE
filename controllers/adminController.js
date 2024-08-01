@@ -1,7 +1,7 @@
 // adminController.js
-const { Admin } = require('../models')
-const bcrypt = require('bcrypt')
-const jwt = require('jsonwebtoken')
+const { Admin, Submission_Change, Alumni } = require('../models');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 module.exports = {
 
@@ -94,36 +94,37 @@ deleteAdmin: async (req, res) => {
   },
 
  loginAdmin: async (req, res) => {
-    try {
-      const { email, password } = req.body;
-      const admin = await Admin.findOne({ where: { email } });
-      if (!admin) {
-        return res.status(401).json({ message: 'Invalid email or password' });
-      }
-      
-      const isPasswordValid = await bcrypt.compare(password, admin.password);
-      if (!isPasswordValid) {
-        return res.status(401).json({ message: 'Invalid email or password' });
-      }
+  try {
+    const { email, password } = req.body;
+    const admin = await Admin.findOne({ where: { email } });
+    if (!admin) {
+      return res.status(401).json({ message: 'Invalid email or password' });
+    }
 
-      const token = jwt.sign(
-        { id: admin.id, email: admin.email, role: 'admin' },
-        process.env.SECRET_KEY,
-        { expiresIn: '1h' }
-      );
+    const isPasswordValid = await bcrypt.compare(password, admin.password);
+    if (!isPasswordValid) {
+      return res.status(401).json({ message: 'Invalid email or password' });
+    }
 
-      res.json({
-        message: 'Login successful',
-        token: token,
-        admin: {
-          id: admin.id,
-          name: admin.name,
-          email: admin.email
-        }
-      });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'Error logging in' });
+    const token = jwt.sign(
+      { id: admin.id, email: admin.email, role: 'admin' },
+      process.env.SECRET_KEY,
+      { expiresIn: '1h' }
+    );
+
+    res.json({
+      message: 'Login successful',
+      token: token,
+      admin: {
+        id: admin.id,
+        name: admin.name,
+        email: admin.email,
+        role: 'admin' // Ensure role is included
+      }
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error logging in' });
     }
   },
-}
+};

@@ -8,7 +8,7 @@ const {
   getAdmins,
   getAdminById,
   updateAdmin,
-  deleteAdmin
+  deleteAdmin,
 } = require("../controllers/adminController");
 
 // New route for creating an admin
@@ -18,8 +18,8 @@ route.post("/create", createAdmin);
 route.post("/login", loginAdmin);
 
 // Routes that require authentication and admin role
-route.get("/", authenticateAdmin, checkAdminRole, getAdmins);
-route.get("/:id", authenticateAdmin, checkAdminRole, getAdminById);
+route.get("/", authenticateAdmin, getAdmins);
+route.get("/:id", authenticateAdmin, getAdminById);
 route.put("/:id", authenticateAdmin, checkAdminRole, updateAdmin);
 route.delete("/:id", authenticateAdmin, checkAdminRole, deleteAdmin);
 

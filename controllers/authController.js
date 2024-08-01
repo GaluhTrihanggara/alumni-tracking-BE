@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require('bcrypt');
-const { Alumni, Program_Studi, Media_Sosial_Alumni, Media_Sosial } = require("../models");
+const { Alumni, Program_Studi, Media_Sosial_Alumni, Media_Sosial, Submission_Change } = require("../models");
 const { UniqueConstraintError } = require("sequelize");
 
 module.exports = {
@@ -167,4 +167,27 @@ module.exports = {
       res.status(500).json({ message: "Error updating profile" });
     }
   },
+
+  submitProfileChanges: async (req, res) => {
+  try {
+    const { id } = req.user;
+    const { changes } = req.body;
+
+    if (!Submission_Change) {
+      throw new Error('Submission_Change model is not defined');
+    }
+
+    // Simpan perubahan ke tabel sementara atau collection baru
+    const submission = await Submission_Change.create({
+      alumni_id: id,
+      changes: changes,
+      status: 'pending'
+    });
+
+    res.status(200).json({ message: "Profile changes submitted for approval", submissionId: submission.id });
+  } catch (error) {
+    console.error('Error submitting profile changes:', error);
+    res.status(500).json({ message: "Error submitting profile changes", error: error.message });
+  }
+}
 };
