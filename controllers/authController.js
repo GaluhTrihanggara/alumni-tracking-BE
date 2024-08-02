@@ -182,10 +182,13 @@ module.exports = {
       return res.status(404).json({ message: 'Profile not found' });
     }
 
-    // Compare the submitted changes with the current profile data
+   // Bandingkan perubahan yang diajukan dengan data profil saat ini
     const filteredChanges = {};
     for (const key in changes) {
-      if (JSON.stringify(changes[key]) !== JSON.stringify(currentProfile[key])) {
+      if (key === 'Media_Sosial_Alumnis') {
+        // Khusus untuk media sosial, simpan seluruh array baru
+        filteredChanges[key] = changes[key];
+      } else if (JSON.stringify(changes[key]) !== JSON.stringify(currentProfile[key])) {
         filteredChanges[key] = changes[key];
       }
     }

@@ -1,4 +1,4 @@
-const { Submission_Change, Alumni } = require("../models");
+const { Submission_Change, Alumni, Media_Sosial_Alumni } = require("../models");
 
 module.exports = {
   getAllSubmissionChanges: async (req, res) => {
@@ -73,11 +73,26 @@ module.exports = {
         return res.status(404).json({ message: "Alumni not found" });
       }
 
-      // Apply changes to the alumni record
-      Object.assign(alumni, changes);
+      // Perbarui profil alumni
+    for (const key in changes) {
+      if (key === 'Media_Sosial_Alumnis') {
+        // Hapus media sosial yang ada
+        await Media_Sosial_Alumni.destroy({ where: { alumni_id: alumni.id } });
 
-      // Save the updated alumni record
-      await alumni.save();
+        // Tambahkan media sosial baru
+        for (const media of changes[key]) {
+          await Media_Sosial_Alumni.create({
+            alumni_id: alumni.id,
+            media_sosial_id: media.media_sosial_id,
+            link: media.link
+          });
+        }
+      } else {
+        alumni[key] = changes[key];
+      }
+    }
+
+    await alumni.save();
 
       // Update the status of the submission change
       submissionChange.status = "Approved";
@@ -86,11 +101,37 @@ module.exports = {
       res.status(200).json({ message: "Profile changes approved and applied" });
     } catch (error) {
       console.error(error);
-      res
-        .status(500)
-        .json({
-          message: "An error occurred while approving the submission change",
-        });
+      res.status(500).json({
+        message: "An error occurred while approving the submission change",
+      });
+    }
+  },
+  rejectSubmissionChange: async (req, res) => {
+    const { id } = req.params;
+
+    try {
+      const submissionChange = await Submission_Change.findByPk(id);
+
+      if (!submissionChange) {
+        return res.status(404).json({ message: "Submission Change not found" });
+      }
+
+      if (submissionChange.status === "Rejected") {
+        return res
+          .status(400)
+          .json({ message: "Submission Change is already rejected" });
+      }
+
+      // Update the status of the submission change
+      submissionChange.status = "Rejected";
+      await submissionChange.save();
+
+      res.status(200).json({ message: "Profile changes rejected" });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({
+        message: "An error occurred while rejecting the submission change",
+      });
     }
   },
 };
