@@ -88,4 +88,31 @@ module.exports = {
       res.status(500).json({ message: "Error deleting alumni" });
     }
   },
+
+  changePassword: async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    const alumni = req.user; // Diasumsikan middleware auth menyimpan data alumni di req.user
+
+    // Verifikasi password saat ini
+    const isMatch = await bcrypt.compare(currentPassword, alumni.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: "Password saat ini tidak cocok" });
+    }
+
+    // Hash password baru
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+    // Update password
+    await Alumni.update(
+      { password: hashedPassword },
+      { where: { id: alumni.id } }
+    );
+    res.json({ message: "Password berhasil diubah" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Terjadi kesalahan saat mengubah password" });
+  }
+},
 };
