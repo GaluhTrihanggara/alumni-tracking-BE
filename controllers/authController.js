@@ -37,6 +37,7 @@ module.exports = {
                 res.status(200).json({
                     message: "Login Successful",
                     alumniId: alumni.id,
+                    nama: alumni.nama,
                     token: token,
                 });
             } else {
