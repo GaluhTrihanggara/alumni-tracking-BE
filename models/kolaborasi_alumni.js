@@ -30,6 +30,16 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.ENUM,
       values: ['Pending', 'Approved', 'Rejected'],
       defaultValue: 'Pending'
+    },
+    media_sosial_data: {
+      type: DataTypes.TEXT,
+      get() {
+        const rawValue = this.getDataValue('media_sosial_data');
+        return rawValue ? JSON.parse(rawValue) : [];
+      },
+      set(value) {
+        this.setDataValue('media_sosial_data', JSON.stringify(value));
+      }
     }
   }, {
     sequelize,

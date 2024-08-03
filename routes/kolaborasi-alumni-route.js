@@ -4,7 +4,8 @@ const router = express.Router();
 const {
     submitNewAlumni,
     getPendingSubmissions,
-    processSubmission
+    approveSubmission,
+    rejectSubmission
 } = require('../controllers/kolaborasi_alumniController');
 const authenticateAdmin = require('../middleware/adminAuth');
 const authenticate = require('../middleware/auth'); // Asumsikan Anda memiliki middleware ini
@@ -15,7 +16,7 @@ router.post('/submit', authenticate, submitNewAlumni);
 // Route untuk admin melihat pengajuan yang pending
 router.get('/pending', authenticateAdmin, getPendingSubmissions);
 
-// Route untuk admin menyetujui atau menolak pengajuan
-router.post('/process', authenticateAdmin, processSubmission);
+router.post('/:id/approve', authenticateAdmin, approveSubmission);
+router.post('/:id/reject', authenticateAdmin, rejectSubmission);
 
 module.exports = router;

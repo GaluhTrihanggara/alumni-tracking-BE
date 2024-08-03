@@ -49,6 +49,10 @@ module.exports = {
       status: {
         type: Sequelize.ENUM('Pending', 'Approved', 'Rejected'),
         defaultValue: 'Pending'
+      },
+      media_sosial_data: {
+        type: Sequelize.TEXT,
+        allowNull: true
       }
     });
   },

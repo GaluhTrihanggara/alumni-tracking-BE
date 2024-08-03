@@ -17,7 +17,11 @@ module.exports = {
         status_mahasiswa_saat_ini: "Lulus",
         pekerjaan_saat_ini: "Engineer",
         nama_perusahaan: "Tech Corp",
-        status: "Pending"
+        status: "Pending",
+        media_sosial_data: JSON.stringify([
+          { media_sosial_id: '1', link: 'https://facebook.com/johndoe' },
+          { media_sosial_id: '2', link: 'https://twitter.com/johndoe' }
+        ])
       },
       {
         program_studi_id: 2,
@@ -32,7 +36,11 @@ module.exports = {
         status_mahasiswa_saat_ini: "Lulus",
         pekerjaan_saat_ini: "Analyst",
         nama_perusahaan: "Data Inc",
-        status: "Approved"
+        status: "Approved",
+        media_sosial_data: JSON.stringify([
+          { media_sosial_id: '1', link: 'https://facebook.com/johndoe' },
+          { media_sosial_id: '2', link: 'https://twitter.com/johndoe' }
+        ])
       }
     ], {});
   },

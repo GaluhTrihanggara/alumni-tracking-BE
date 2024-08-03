@@ -9,6 +9,7 @@ const {
   getAdminById,
   updateAdmin,
   deleteAdmin,
+  changePassword
 } = require("../controllers/adminController");
 
 // New route for creating an admin
@@ -22,5 +23,5 @@ route.get("/", authenticateAdmin, getAdmins);
 route.get("/:id", authenticateAdmin, getAdminById);
 route.put("/:id", authenticateAdmin, checkAdminRole, updateAdmin);
 route.delete("/:id", authenticateAdmin, checkAdminRole, deleteAdmin);
-
+route.post("/change-password", authenticateAdmin, changePassword);
 module.exports = route;

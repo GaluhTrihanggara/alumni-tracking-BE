@@ -127,4 +127,31 @@ deleteAdmin: async (req, res) => {
     res.status(500).json({ message: 'Error logging in' });
     }
   },
+
+  changePassword: async (req, res) => {
+    try {
+      const { currentPassword, newPassword } = req.body;
+      const admin = req.user; // Diasumsikan middleware auth menyimpan data admin di req.user
+
+      // Verifikasi password saat ini
+      const isMatch = await bcrypt.compare(currentPassword, admin.password);
+      if (!isMatch) {
+        return res.status(400).json({ message: "Password saat ini tidak cocok" });
+      }
+
+      // Hash password baru
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+      // Update password
+      await Admin.update(
+        { password: hashedPassword },
+        { where: { id: admin.id } }
+      );
+      res.json({ message: "Password berhasil diubah" });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Terjadi kesalahan saat mengubah password" });
+    }
+  },
 };
