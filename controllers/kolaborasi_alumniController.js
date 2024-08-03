@@ -61,7 +61,6 @@ module.exports = {
       return res.status(404).json({ message: 'Submission not found' });
     }
 
-    const hashedPassword = await bcrypt.hash("12345", 10);
     const newAlumni = await Alumni.create({
       nama: submission.nama,
       nomor_induk_mahasiswa: submission.nomor_induk_mahasiswa,
@@ -74,12 +73,11 @@ module.exports = {
       status_mahasiswa_saat_ini: submission.status_mahasiswa_saat_ini,
       pekerjaan_saat_ini: submission.pekerjaan_saat_ini,
       nama_perusahaan: submission.nama_perusahaan,
-      password: hashedPassword,
+      password: "12345"  // Password plain text yang nanti akan dihash di model hooks
     });
 
-    // Ambil data media sosial dari kolom media_sosial_data
+    // Save media social data if exists
     const mediaSocialData = submission.media_sosial_data;
-    
     if (mediaSocialData && mediaSocialData.length > 0) {
       await Promise.all(mediaSocialData.map(media => 
         Media_Sosial_Alumni.create({
@@ -90,6 +88,7 @@ module.exports = {
       ));
     }
 
+    // Update submission status
     await submission.update({ status: 'Approved' });
 
     res.status(200).json({ message: 'Submission approved and new alumni created' });

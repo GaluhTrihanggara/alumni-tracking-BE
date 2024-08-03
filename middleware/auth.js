@@ -38,10 +38,4 @@ const authenticate = async (req, res, next) => {
   }
 };
 
-const token = jwt.sign(
-  { nomor_induk_mahasiswa: Alumni.nomor_induk_mahasiswa },
-  process.env.SECRET_KEY,
-  { expiresIn: '1h' }
-);
-
 module.exports = authenticate;

@@ -5,50 +5,56 @@ const { UniqueConstraintError } = require("sequelize");
 
 module.exports = {
     loginAction: async (req, res) => {
-        const { nomor_induk_mahasiswa, password } = req.body;
+    const { nomor_induk_mahasiswa, password } = req.body;
 
-        if (!nomor_induk_mahasiswa || !password) {
-            return res.status(400).json({
-                message: "NIM and Password are required",
+    if (!nomor_induk_mahasiswa || !password) {
+        return res.status(400).json({
+            message: "NIM and Password are required",
+        });
+    }
+
+    try {
+        const alumni = await Alumni.findOne({
+            where: {
+                nomor_induk_mahasiswa: nomor_induk_mahasiswa,
+            },
+        });
+
+        if (!alumni) {
+            return res.status(404).json({
+                message: "NIM or Password is incorrect",
             });
         }
 
-        try {
-            const alumni = await Alumni.findOne({
-                where: {
-                    nomor_induk_mahasiswa: nomor_induk_mahasiswa,
-                },
+        console.log('Stored hashed password:', alumni.password);
+        console.log('Provided password:', password);
+
+        const passwordIsValid = await bcrypt.compare(password, alumni.password);
+        console.log('Password is valid:', passwordIsValid);
+
+        if (passwordIsValid) {
+            const token = jwt.sign(
+                { id: alumni.id, nomor_induk_mahasiswa: alumni.nomor_induk_mahasiswa },
+                process.env.SECRET_KEY,
+                { expiresIn: '1h' }
+            );
+
+            res.status(200).json({
+                message: "Login Successful",
+                alumniId: alumni.id,
+                nama: alumni.nama,
+                token: token,
             });
-
-            if (!alumni) {
-                return res.status(404).json({
-                    message: "NIM or Password is incorrect",
-                });
-            }
-
-            const passwordIsValid = await bcrypt.compare(password, alumni.password);
-            if (passwordIsValid) {
-                const token = jwt.sign(
-                    { id: alumni.id, nomor_induk_mahasiswa: alumni.nomor_induk_mahasiswa },
-                    process.env.SECRET_KEY,
-                    { expiresIn: '1h' }
-                );
-
-                res.status(200).json({
-                    message: "Login Successful",
-                    alumniId: alumni.id,
-                    nama: alumni.nama,
-                    token: token,
-                });
-            } else {
-                res.status(401).json({
-                    message: "NIM or Password is incorrect",
-                });
-            }
-        } catch (error) {
-            res.status(500).json({ message: error.message });
+        } else {
+            res.status(401).json({
+                message: "NIM or Password is incorrect",
+            });
         }
-    },
+    } catch (error) {
+        console.error('Login error:', error);
+        res.status(500).json({ message: error.message });
+    }
+},
 
     registerAction: async (req, res) => {
         const { nama, nomor_induk_mahasiswa, password } = req.body;

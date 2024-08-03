@@ -1,9 +1,28 @@
 // alumniController.js
 const { Alumni } = require("../models");
+const { Op } = require("sequelize");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 module.exports = {
+  searchAlumni: async (req, res) => {
+  try {
+    const { query } = req.query;
+    const alumni = await Alumni.findAll({
+      where: {
+        nama: {
+          [Op.like]: `${query}%`
+        }
+      },
+      attributes: ['id', 'nama'], // Hanya ambil id dan nama
+      limit: 10 // Batasi hasil pencarian
+    });
+    res.json(alumni);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error searching alumni" });
+  }
+},
   getAlumni: async (req, res) => {
     try {
       const limit = parseInt(req.query.limit) || 10; // Jumlah data per halaman
