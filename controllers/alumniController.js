@@ -1,5 +1,5 @@
 // alumniController.js
-const { Alumni } = require("../models");
+const { Alumni, Program_Studi, Media_Sosial_Alumni } = require("../models");
 const { Op } = require("sequelize");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
@@ -14,8 +14,38 @@ module.exports = {
           [Op.like]: `${query}%`
         }
       },
-      attributes: ['id', 'nama'], // Hanya ambil id dan nama
-      limit: 10 // Batasi hasil pencarian
+      attributes: [
+        'id', 
+        'nama',
+        'nomor_induk_mahasiswa',
+        'program_studi_id',
+        'kontak_telephone',
+        'jenis_kelamin',
+        'perguruan_tinggi',
+        'jenjang',
+        'tahun_masuk',
+        'pekerjaan_saat_ini',
+        'nama_perusahaan',
+      ],
+      include: [
+        {
+          model: Program_Studi,
+          as: 'Program_Studi',
+          attributes: ['name']
+        },
+        {
+          model: Media_Sosial_Alumni,
+          as: 'Media_Sosial',
+          attributes: ['media_sosial_id', 'link'],
+          include: [
+            {
+              model: Media_Sosial,
+              attributes: ['name']
+            }
+          ]
+        }
+      ],
+      limit: 10
     });
     res.json(alumni);
   } catch (error) {
