@@ -5,15 +5,15 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 module.exports = {
-  searchAlumni: async (req, res) => {
-  try {
-    const { query } = req.query;
-    const alumni = await Alumni.findAll({
-      where: {
-        nama: {
-          [Op.like]: `${query}%`
-        }
-      },
+ searchAlumni: async (req, res) => {
+    try {
+      const { query } = req.query;
+      const alumni = await Alumni.findAll({
+        where: {
+          nama: {
+            [Op.like]: `%${query}%`
+          }
+        },
       attributes: [
         'id', 
         'nama',
@@ -33,17 +33,6 @@ module.exports = {
           as: 'Program_Studi',
           attributes: ['name']
         },
-        {
-          model: Media_Sosial_Alumni,
-          as: 'Media_Sosial',
-          attributes: ['media_sosial_id', 'link'],
-          include: [
-            {
-              model: Media_Sosial,
-              attributes: ['name']
-            }
-          ]
-        }
       ],
       limit: 10
     });
@@ -78,10 +67,12 @@ module.exports = {
     }
   },
 
-  getAlumniById: async (req, res) => {
+   getAlumniById: async (req, res) => {
     try {
       const id = req.params.id;
-      const alumni = await Alumni.findByPk(id);
+      const alumni = await Alumni.findByPk(id, {
+        include: [{ model: Media_Sosial_Alumni, as: "media_sosial" }],
+      });
       if (alumni) {
         res.json(alumni);
       } else {
@@ -92,6 +83,7 @@ module.exports = {
       res.status(500).json({ message: "Error retrieving alumni" });
     }
   },
+
 
   createAlumni: async (req, res) => {
     try {
@@ -111,7 +103,9 @@ module.exports = {
       const id = req.params.id;
       const alumni = await Alumni.findByPk(id);
       if (alumni) {
-        await alumni.update(req.body);
+        await alumni.update(req.body, {
+          include: [{ model: Media_Sosial_Alumni, as: "media_sosial" }],
+        });
         res.json(alumni);
       } else {
         res.status(404).json({ message: "Alumni not found" });

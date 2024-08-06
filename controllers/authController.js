@@ -36,7 +36,7 @@ module.exports = {
             const token = jwt.sign(
                 { id: alumni.id, nomor_induk_mahasiswa: alumni.nomor_induk_mahasiswa },
                 process.env.SECRET_KEY,
-                { expiresIn: '1h' }
+                { expiresIn: '5h' }
             );
 
             res.status(200).json({

@@ -1,6 +1,7 @@
 // adminController.js
-const { Admin, Submission_Change, Alumni } = require('../models');
+const { Admin, Submission_Change, Alumni, Program_Studi, Media_Sosial_Alumni, Media_Sosial } = require('../models');
 const bcrypt = require('bcrypt');
+const { Op } = require("sequelize");
 const jwt = require('jsonwebtoken');
 
 module.exports = {
@@ -109,7 +110,7 @@ deleteAdmin: async (req, res) => {
     const token = jwt.sign(
       { id: admin.id, email: admin.email, role: 'admin' },
       process.env.SECRET_KEY,
-      { expiresIn: '1h' }
+      { expiresIn: '5h' }
     );
 
     res.json({
@@ -154,4 +155,69 @@ deleteAdmin: async (req, res) => {
       res.status(500).json({ message: "Terjadi kesalahan saat mengubah password" });
     }
   },
+  adminSearchAlumni: async (req, res) => {
+    try {
+      const { query } = req.query;
+      const alumni = await Alumni.findAll({
+        where: {
+          nama: {
+            [Op.like]: `%${query}%`
+          }
+        },
+      attributes: [
+        'id', 
+        'nama',
+        'nomor_induk_mahasiswa',
+        'program_studi_id',
+        'kontak_telephone',
+        'jenis_kelamin',
+        'perguruan_tinggi',
+        'jenjang',
+        'tahun_masuk',
+        'pekerjaan_saat_ini',
+        'nama_perusahaan',
+      ],
+      include: [
+        {
+          model: Program_Studi,
+          as: 'Program_Studi',
+          attributes: ['name']
+        },
+      ],
+      limit: 10
+    });
+    res.json(alumni);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error searching alumni" });
+  }
+},
+
+getAlumniByNameSlug: async (req, res) => {
+  try {
+    const { nameSlug } = req.params;
+    const alumni = await Alumni.findOne({
+      where: {
+        nama: {
+          [Op.like]: nameSlug.replace(/-/g, ' ')
+        }
+      },
+      include: [
+        { model: Program_Studi, as: "Program_Studi" },
+        {
+          model: Media_Sosial_Alumni,
+          include: [{ model: Media_Sosial, as: "Media_Sosial" }],
+        },
+      ],
+    });
+
+    if (!alumni) {
+      return res.status(404).json({ message: "Alumni not found" });
+    }
+
+    res.status(200).json(alumni);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
 };
