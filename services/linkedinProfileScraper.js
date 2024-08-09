@@ -16,7 +16,7 @@ function cleanName(name) {
 const typingSearchInput = async (page, searchText) => {
   const inputFieldSelector = '#global-nav-typeahead > input';
   await page.waitForSelector(inputFieldSelector);
-  await page.type(inputFieldSelector, searchText, { delay: 150 });
+  await page.type(inputFieldSelector, searchText, { delay: 40 });
   await page.keyboard.press("Enter");
   await page.waitForTimeout(3000);
 };

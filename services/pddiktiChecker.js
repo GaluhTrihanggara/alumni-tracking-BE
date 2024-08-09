@@ -1,6 +1,17 @@
 const puppeteer = require("puppeteer");
 const { Alumni_Sementara, Program_Studi } = require("../models");
 
+function cleanName(name) {
+  // Menghapus titik di akhir nama
+  name = name.replace(/\.$/, '');
+  // Menghapus karakter khusus dan angka
+  name = name.replace(/[^a-zA-Z\s]/g, '');
+  // Menghapus spasi berlebih
+  name = name.replace(/\s+/g, ' ').trim();
+  // Menambahkan "Universitas Esa Unggul" di belakang nama
+  return `${name} Universitas Esa Unggul`;
+}
+
 const getProgramStudiId = async (programStudiName) => {
   const programStudi = await Program_Studi.findOne({ where: { name: programStudiName } });
   return programStudi ? programStudi.id : null;
@@ -40,6 +51,7 @@ const postData = async (dataAlumni) => {
 };
 
 const checkAndScrapeAlumni = async (alumniName) => {
+  const cleanedName = cleanName(alumniName);
   const webUrl = "https://pddikti.kemdikbud.go.id/";
   const inputFieldSelector = 'div.flex > input[type="text"]';
   const selectedAlumniNameSelector = 'a[href^="/detail-mahasiswa/"]';
@@ -57,7 +69,7 @@ const checkAndScrapeAlumni = async (alumniName) => {
     await page.goto(webUrl);
     await page.waitForTimeout(1000);
     await page.waitForSelector(inputFieldSelector);
-    await page.type(inputFieldSelector, alumniName, { delay: 100 });
+    await page.type(inputFieldSelector, cleanedName, alumniName, { delay: 100 });
     await page.keyboard.press("Enter");
 
     console.log("Please solve the reCAPTCHA manually.");
