@@ -8,6 +8,8 @@ function cleanName(name) {
   name = name.replace(/[^a-zA-Z\s]/g, '');
   // Menghapus spasi berlebih
   name = name.replace(/\s+/g, ' ').trim();
+  // Mengubah huruf pertama setiap kata menjadi kapital
+  name = name.replace(/\b\w/g, c => c.toUpperCase());
   // Menambahkan "Universitas Esa Unggul" di belakang nama
   return `${name} Universitas Esa Unggul`;
 }
@@ -73,7 +75,7 @@ const checkAndScrapeAlumni = async (alumniName) => {
     await page.keyboard.press("Enter");
 
     console.log("Please solve the reCAPTCHA manually.");
-    await page.waitForTimeout(10000); // Wait for manual solving
+    await page.waitForTimeout(20000); // Wait for manual solving
     await page.waitForSelector(selectedAlumniNameSelector);
 
     await page.evaluate(async (selector) => {

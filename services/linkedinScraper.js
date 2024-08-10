@@ -7,6 +7,7 @@ function cleanName(name) {
   name = name.replace(/\.$/, '');
   name = name.replace(/[^a-zA-Z\s]/g, '');
   name = name.replace(/\s+/g, ' ').trim();
+  name = name.replace(/\b\w/g, c => c.toUpperCase());
   return `${name} Universitas Esa Unggul`;
 }
 
