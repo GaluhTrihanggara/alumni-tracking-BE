@@ -14,9 +14,6 @@ module.exports = (sequelize, DataTypes) => {
       Scrapping_History.belongsTo(models.Admin, {
         foreignKey: 'admin_id'
       });
-      Scrapping_History.hasMany(models.Scrapping_Log, {
-        foreignKey: 'Scrapping_history_id'
-      });
     }
   }
   Scrapping_History.init({

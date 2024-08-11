@@ -219,5 +219,48 @@ getAlumniByNameSlug: async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
-}
+},
+
+ getAdminProfile: async (req, res) => {
+    try {
+      const adminId = req.user.id; // Diasumsikan middleware auth menyimpan data admin di req.user
+      const admin = await Admin.findByPk(adminId, {
+        attributes: ['id', 'name', 'email'] // Hanya ambil field yang diperlukan
+      });
+      
+      if (!admin) {
+        return res.status(404).json({ message: "Admin not found" });
+      }
+
+      res.json(admin);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Error fetching admin profile" });
+    }
+  },
+
+updateAdminProfile: async (req, res) => {
+    try {
+      const adminId = req.user.id; // Diasumsikan middleware auth menyimpan data admin di req.user
+      const { name, email } = req.body;
+
+      const admin = await Admin.findByPk(adminId);
+      if (!admin) {
+        return res.status(404).json({ message: "Admin not found" });
+      }
+
+      // Update nama dan email
+      await admin.update({ name, email });
+
+      // Ambil data yang sudah diupdate
+      const updatedAdmin = await Admin.findByPk(adminId, {
+        attributes: ['id', 'name', 'email']
+      });
+
+      res.json(updatedAdmin);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Error updating admin profile" });
+    }
+  }
 };

@@ -11,7 +11,9 @@ const {
   deleteAdmin,
   changePassword,
   adminSearchAlumni,
-  getAlumniByNameSlug
+  getAlumniByNameSlug,
+  getAdminProfile,
+  updateAdminProfile
 } = require("../controllers/adminController");
 const {getProgramStudis} = require('../controllers/program_studi')
 const {updateAlumni} = require('../controllers/alumniController');
@@ -24,13 +26,16 @@ route.post("/create", createAdmin);
 // Admin login route without authentication middleware
 route.post("/login", loginAdmin);
 
-route.get ("/search", authenticateAdmin, adminSearchAlumni)
+route.get ("/search", authenticateAdmin, adminSearchAlumni);
 
-route.put ("/alumni/:id", authenticateAdmin, updateAlumni)
+route.put ("/alumni/:id", authenticateAdmin, updateAlumni);
 
 route.get ("/media-sosial-alumni/:id", authenticateAdmin, getMediaSosialByAlumniId);
 route.get("/media-sosial",authenticateAdmin ,getMediaSosials);
 route.get('/alumni/:nameSlug', authenticateAdmin, getAlumniByNameSlug);
+
+route.get("/profile", authenticateAdmin, getAdminProfile);
+route.put("/profile", authenticateAdmin, updateAdminProfile);
 
 route.get("/program-studi", authenticateAdmin, getProgramStudis);
 // Routes that require authentication and admin role
