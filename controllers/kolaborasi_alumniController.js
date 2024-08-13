@@ -7,6 +7,12 @@ module.exports = {
   submitNewAlumni: async (req, res) => {
   try {
     const newAlumniData = req.body;
+
+    // Validasi nama pengaju
+    if (!newAlumniData.pengaju) {
+      return res.status(400).json({ message: 'Nama pengaju harus disertakan' });
+    }
+
     newAlumniData.password = await bcrypt.hash("12345", 10);
     
     // Simpan data media sosial dalam kolom media_sosial_data
@@ -16,6 +22,8 @@ module.exports = {
     
     // Hapus mediaSosial dari newAlumniData karena sudah disimpan di media_sosial_data
     delete newAlumniData.mediaSosial;
+
+    console.log('Data yang akan disimpan:', newAlumniData);
 
     const createdKolaborasi = await Kolaborasi_Alumni.create(newAlumniData);
 
