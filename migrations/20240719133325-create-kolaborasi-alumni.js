@@ -15,6 +15,9 @@ module.exports = {
       pengaju: {
         type: Sequelize.STRING
       },
+      nim_pengaju: {
+        type: Sequelize.STRING
+      },
       nama: {
         type: Sequelize.STRING
       },

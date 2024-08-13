@@ -7,6 +7,7 @@ module.exports = {
       { 
         program_studi_id: 1,
         pengaju: "Galuh Trihanggara",
+        nim_pengaju: "20200901239",
         nama: "Ahmad",
         nomor_induk_mahasiswa: "20160801001",
         kontak_telephone: "081234567890",
@@ -27,6 +28,7 @@ module.exports = {
       {
         program_studi_id: 2,
         pengaju: "Alan",
+        nim_pengaju: "20180901239",
         nama: "Siti",
         nomor_induk_mahasiswa: "20160801002",
         kontak_telephone: "081234567891",
