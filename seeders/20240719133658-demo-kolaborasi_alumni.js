@@ -6,6 +6,7 @@ module.exports = {
     await queryInterface.bulkInsert('Kolaborasi_Alumnis', [
       { 
         program_studi_id: 1,
+        pengaju: "Galuh Trihanggara",
         nama: "Ahmad",
         nomor_induk_mahasiswa: "20160801001",
         kontak_telephone: "081234567890",
@@ -25,6 +26,7 @@ module.exports = {
       },
       {
         program_studi_id: 2,
+        pengaju: "Alan",
         nama: "Siti",
         nomor_induk_mahasiswa: "20160801002",
         kontak_telephone: "081234567891",
