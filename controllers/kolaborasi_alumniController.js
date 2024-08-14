@@ -26,8 +26,7 @@ module.exports = {
     console.log('Data yang akan disimpan:', newAlumniData);
 
     const createdKolaborasi = await Kolaborasi_Alumni.create({
-  ...newAlumniData,
-  nim_pengaju: userData.nomor_induk_mahasiswa, // Misalnya mengambil dari user yang login
+  ...newAlumniData
 });
 
     res.status(201).json({

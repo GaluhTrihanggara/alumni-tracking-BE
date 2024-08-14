@@ -31,8 +31,8 @@ module.exports = {
         type: Sequelize.STRING
       },
       jenis_kelamin: {
-        type: Sequelize.ENUM('laki-laki','perempuan'),
-        defaultValue: 'laki-laki'
+        type: Sequelize.ENUM('Laki-laki','Perempuan'),
+        defaultValue: 'Laki-laki'
       },
       perguruan_tinggi: {
         type: Sequelize.STRING

@@ -6,42 +6,59 @@ const jwt = require("jsonwebtoken");
 
 module.exports = {
  searchAlumni: async (req, res) => {
-    try {
-      const { query } = req.query;
-      const alumni = await Alumni.findAll({
-        where: {
-          nama: {
-            [Op.like]: `%${query}%`
-          }
-        },
-      attributes: [
-        'id', 
-        'nama',
-        'nomor_induk_mahasiswa',
-        'program_studi_id',
-        'kontak_telephone',
-        'jenis_kelamin',
-        'perguruan_tinggi',
-        'jenjang',
-        'tahun_masuk',
-        'pekerjaan_saat_ini',
-        'nama_perusahaan',
-      ],
-      include: [
-        {
-          model: Program_Studi,
-          as: 'Program_Studi',
-          attributes: ['name']
-        },
-      ],
-      limit: 10
-    });
-    res.json(alumni);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Error searching alumni" });
-  }
-},
+     try {
+       const { query, fromYear, toYear, programStudi } = req.query;
+
+       // Build the search conditions
+       let searchConditions = {
+         nama: {
+           [Op.like]: `%${query}%`
+         }
+       };
+
+       // Add filter for Program Studi if provided
+       if (programStudi) {
+         searchConditions['$Program_Studi.name$'] = programStudi;
+       }
+
+       // Add filter for Tahun Masuk if provided
+       if (fromYear && toYear) {
+         searchConditions.tahun_masuk = {
+           [Op.between]: [fromYear, toYear]
+         };
+       }
+
+       const alumni = await Alumni.findAll({
+         where: searchConditions,
+         attributes: [
+           'id', 
+           'nama',
+           'nomor_induk_mahasiswa',
+           'program_studi_id',
+           'kontak_telephone',
+           'jenis_kelamin',
+           'perguruan_tinggi',
+           'jenjang',
+           'tahun_masuk',
+           'pekerjaan_saat_ini',
+           'nama_perusahaan',
+         ],
+         include: [
+           {
+             model: Program_Studi,
+             as: 'Program_Studi',
+             attributes: ['name']
+           },
+         ],
+         limit: 10
+       });
+
+       res.json(alumni);
+     } catch (error) {
+       console.error(error);
+       res.status(500).json({ message: "Error searching alumni" });
+     }
+   },
   getAlumni: async (req, res) => {
     try {
       const limit = parseInt(req.query.limit) || 10; // Jumlah data per halaman
