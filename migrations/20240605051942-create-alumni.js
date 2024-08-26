@@ -56,6 +56,12 @@ module.exports = {
       nama_perusahaan: {
         type: Sequelize.STRING,
         allowNull: true
+      },
+       lama_menunggu_pekerjaan: {
+        type: Sequelize.INTEGER,
+      },
+      gaji_pertama: {
+        type: Sequelize.BIGINT,
       }
     });
   },

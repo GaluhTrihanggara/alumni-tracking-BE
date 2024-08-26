@@ -98,7 +98,7 @@ const scrapeLinkedInNames = async () => {
     let checkedNames = 0;
 
     for (const profile of alumniProfiles) {
-      if (checkedNames >= 3) break;
+      if (checkedNames >= 1) break;
 
       const name = await page.evaluate(el => el.innerText.trim(), profile);
       if (name && name !== "Anggota LinkedIn") {

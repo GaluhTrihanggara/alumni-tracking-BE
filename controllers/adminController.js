@@ -257,6 +257,105 @@ getAlumniByNameSlug: async (req, res) => {
     }
   },
 
+  getAlumniContacts: async (req, res) => {
+   try {
+        const alumniContacts = await Alumni.findAll({
+            attributes: ['id', 'nama','nomor_induk_mahasiswa', 'kontak_telephone'],
+            where: {
+                kontak_telephone: {
+                    [Op.ne]: null
+                }
+            }
+        });
+
+        res.json(alumniContacts);
+    } catch (error) {
+        console.error('Error fetching alumni contacts:', error);
+        res.status(500).json({ message: 'Error fetching alumni contacts' });
+    }
+},
+  
+  getAlumniByYearAndProgram: async (req, res) => {
+  try {
+    const { year, programStudiId } = req.query;
+    
+    const alumni = await Alumni.findAll({
+      where: {
+        tahun_masuk: year,
+        program_studi_id: programStudiId
+      },
+      attributes: ['id', 'nama', 'lama_menunggu_pekerjaan']
+    });
+
+    const count = alumni.length;
+    const totalLamaMenunggu = alumni.reduce((total, alum) => total + (alum.lama_menunggu_pekerjaan || 0), 0);
+    const averageLamaMenunggu = count > 0 ? totalLamaMenunggu / count : 0;
+
+    // Grouping logic
+    const groups = [
+      { name: '1-6 bulan', count: 0 },
+      { name: '7-12 bulan', count: 0 },
+      { name: '13-18 bulan', count: 0 },
+      { name: '19-24 bulan', count: 0 },
+      { name: '25-30 bulan', count: 0 },
+      { name: '> 30 bulan', count: 0 }
+    ];
+
+    alumni.forEach(alum => {
+      const lama = alum.lama_menunggu_pekerjaan || 0;
+      if (lama <= 6) groups[0].count++;
+      else if (lama <= 12) groups[1].count++;
+      else if (lama <= 18) groups[2].count++;
+      else if (lama <= 24) groups[3].count++;
+      else if (lama <= 30) groups[4].count++;
+      else groups[5].count++;
+    });
+
+    res.json({
+      count,
+      totalLamaMenunggu,
+      averageLamaMenunggu,
+      groups
+    });
+  } catch (error) {
+    console.error('Error fetching alumni data:', error);
+    res.status(500).json({ message: 'Error fetching alumni data' });
+  }
+},
+
+getAlumniSalaryData: async (req, res) => {
+  try {
+    const { year, programStudiId } = req.query;
+    
+    const alumni = await Alumni.findAll({
+      where: {
+        tahun_masuk: year,
+        program_studi_id: programStudiId
+      },
+      attributes: ['id', 'nama', 'gaji_pertama']
+    });
+
+    const count = alumni.length;
+    const totalSalary = alumni.reduce((total, alum) => total + (alum.gaji_pertama || 0), 0);
+    const salaries = alumni.map(alum => alum.gaji_pertama).filter(salary => salary !== null);
+    
+    const highestSalary = Math.max(...salaries);
+    const lowestSalary = Math.min(...salaries);
+    const averageSalary = count > 0 ? totalSalary / count : 0;
+
+    res.json({
+      count,
+      totalSalary,
+      highestSalary,
+      lowestSalary,
+      averageSalary
+    });
+  } catch (error) {
+    console.error('Error fetching alumni salary data:', error);
+    res.status(500).json({ message: 'Error fetching alumni salary data' });
+  }
+},
+
 updateAdminProfile: async (req, res) => {
     try {
       const adminId = req.user.id; // Diasumsikan middleware auth menyimpan data admin di req.user

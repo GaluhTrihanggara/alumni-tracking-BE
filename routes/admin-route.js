@@ -13,6 +13,9 @@ const {
   adminSearchAlumni,
   getAlumniByNameSlug,
   getAdminProfile,
+  getAlumniContacts,
+  getAlumniByYearAndProgram,
+  getAlumniSalaryData,
   updateAdminProfile
 } = require("../controllers/adminController");
 const {getProgramStudis} = require('../controllers/program_studi')
@@ -27,12 +30,15 @@ route.post("/create", createAdmin);
 route.post("/login", loginAdmin);
 
 route.get ("/search", authenticateAdmin, adminSearchAlumni);
-
+route.get("/contacts", authenticateAdmin, getAlumniContacts);
 route.put ("/alumni/:id", authenticateAdmin, updateAlumni);
 
 route.get ("/media-sosial-alumni/:id", authenticateAdmin, getMediaSosialByAlumniId);
 route.get("/media-sosial",authenticateAdmin ,getMediaSosials);
 route.get('/alumni/:nameSlug', authenticateAdmin, getAlumniByNameSlug);
+// New route for getting alumni waiting time data
+route.get("/alumni-by-year-and-program", authenticateAdmin, getAlumniByYearAndProgram);
+route.get('/alumni-salary', authenticateAdmin, getAlumniSalaryData);
 
 route.get("/profile", authenticateAdmin, getAdminProfile);
 route.put("/profile", authenticateAdmin, updateAdminProfile);

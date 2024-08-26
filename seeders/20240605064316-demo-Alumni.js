@@ -18,7 +18,9 @@ module.exports = {
         tahun_masuk: '2016',
         status_mahasiswa_saat_ini: 'Lulus',
         pekerjaan_saat_ini: 'Software Engineer',
-        nama_perusahaan: 'Tech Company Inc.'
+        nama_perusahaan: 'Tech Company Inc.',
+        lama_menunggu_pekerjaan: 6,  // 6 bulan
+        gaji_pertama: 7000000 // Rp 7.000.000
       },
       {
         program_studi_id: 2,
@@ -32,7 +34,9 @@ module.exports = {
         tahun_masuk: '2020',
         status_mahasiswa_saat_ini: 'Belum Lulus',
         pekerjaan_saat_ini: 'Data Analyst',
-        nama_perusahaan: 'Data Insights Ltd.'
+        nama_perusahaan: 'Data Insights Ltd.',
+        lama_menunggu_pekerjaan: 6,  // 6 bulan
+        gaji_pertama: 7000000 // Rp 7.000.000
       },
     ], {});
   },

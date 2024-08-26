@@ -12,9 +12,6 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Admin.hasMany(models.Scrapping_History, {
-        foreignKey: 'admin_id'
-      });
     }
   }
   Admin.init({
